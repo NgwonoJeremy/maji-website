@@ -37,5 +37,7 @@ ___
 ____
 ### Ring Position
 
-TEAM 3 ----> *TEAM 4* ----> TEAM 5
+RING POSITION
+
+[ Team 3 ] -- Consume API --> **[ Team 4 ]** -- Produce API --> [ Team 5 ]
 
