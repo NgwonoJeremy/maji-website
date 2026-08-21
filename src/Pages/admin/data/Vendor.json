@@ -1,0 +1,302 @@
+[
+    {
+        "ID": "VID_001",
+        "Name": "Derrick Otieno",
+        "Location": "Kasarani",
+        "Status": "Verified"
+    },
+    {
+        "ID": "VID_002",
+        "Name": "Christine Pauline",
+        "Location": "Madaraka",
+        "Status": "Not Verified"
+    },
+    {
+        "ID": "VID_003",
+        "Name": "James Mwangi",
+        "Location": "Westlands",
+        "Status": "Verified"
+    },
+    {
+        "ID": "VID_004",
+        "Name": "Sarah Akinyi",
+        "Location": "Lang'ata",
+        "Status": "Pending"
+    },
+    {
+        "ID": "VID_005",
+        "Name": "Peter Kimani",
+        "Location": "Ruiru",
+        "Status": "Verified"
+    },
+    {
+        "ID": "VID_006",
+        "Name": "Grace Wanjiru",
+        "Location": "Karen",
+        "Status": "Not Verified"
+    },
+    {
+        "ID": "VID_007",
+        "Name": "David Odhiambo",
+        "Location": "Kilimani",
+        "Status": "Verified"
+    },
+    {
+        "ID": "VID_008",
+        "Name": "Mary Wambui",
+        "Location": "Eastleigh",
+        "Status": "Pending"
+    },
+    {
+        "ID": "VID_009",
+        "Name": "Michael Kiprop",
+        "Location": "Ngong",
+        "Status": "Verified"
+    },
+    {
+        "ID": "VID_010",
+        "Name": "Faith Chelangat",
+        "Location": "Thika Road",
+        "Status": "Not Verified"
+    },
+    {
+        "ID": "VID_011",
+        "Name": "Samuel Mwangi",
+        "Location": "Umoja",
+        "Status": "Verified"
+    },
+    {
+        "ID": "VID_012",
+        "Name": "Jane Atieno",
+        "Location": "Buruburu",
+        "Status": "Pending"
+    },
+    {
+        "ID": "VID_013",
+        "Name": "Robert Omondi",
+        "Location": "Kileleshwa",
+        "Status": "Verified"
+    },
+    {
+        "ID": "VID_014",
+        "Name": "Esther Njoroge",
+        "Location": "Embakasi",
+        "Status": "Not Verified"
+    },
+    {
+        "ID": "VID_015",
+        "Name": "John Kamau",
+        "Location": "Lavington",
+        "Status": "Verified"
+    },
+    {
+        "ID": "VID_016",
+        "Name": "Catherine Wanjiku",
+        "Location": "Kawangware",
+        "Status": "Pending"
+    },
+    {
+        "ID": "VID_017",
+        "Name": "Daniel Mutua",
+        "Location": "Dagoretti",
+        "Status": "Verified"
+    },
+    {
+        "ID": "VID_018",
+        "Name": "Florence Adhiambo",
+        "Location": "Rongai",
+        "Status": "Not Verified"
+    },
+    {
+        "ID": "VID_019",
+        "Name": "George Otieno",
+        "Location": "Syokimau",
+        "Status": "Verified"
+    },
+    {
+        "ID": "VID_020",
+        "Name": "Alice Muthoni",
+        "Location": "Kitengela",
+        "Status": "Pending"
+    },
+    {
+        "ID": "VID_021",
+        "Name": "Thomas Kibet",
+        "Location": "South C",
+        "Status": "Verified"
+    },
+    {
+        "ID": "VID_022",
+        "Name": "Susan Achieng",
+        "Location": "Tena",
+        "Status": "Not Verified"
+    },
+    {
+        "ID": "VID_023",
+        "Name": "Brian Mwenda",
+        "Location": "Githurai",
+        "Status": "Verified"
+    },
+    {
+        "ID": "VID_024",
+        "Name": "Rose Kemunto",
+        "Location": "Kangemi",
+        "Status": "Pending"
+    },
+    {
+        "ID": "VID_025",
+        "Name": "Patrick Njuguna",
+        "Location": "Muthaiga",
+        "Status": "Verified"
+    },
+    {
+        "ID": "VID_026",
+        "Name": "Dorothy Wairimu",
+        "Location": "Parklands",
+        "Status": "Not Verified"
+    },
+    {
+        "ID": "VID_027",
+        "Name": "Eliud Kipchoge",
+        "Location": "Eldoret (Nairobi Area)",
+        "Status": "Verified"
+    },
+    {
+        "ID": "VID_028",
+        "Name": "Mildred Adhiambo",
+        "Location": "Imara Daima",
+        "Status": "Pending"
+    },
+    {
+        "ID": "VID_029",
+        "Name": "Joseph Kuria",
+        "Location": "Ruiru",
+        "Status": "Verified"
+    },
+    {
+        "ID": "VID_030",
+        "Name": "Mercy Jepkosgei",
+        "Location": "Kasarani",
+        "Status": "Not Verified"
+    },
+    {
+        "ID": "VID_031",
+        "Name": "Kennedy Oduor",
+        "Location": "South B",
+        "Status": "Verified"
+    },
+    {
+        "ID": "VID_032",
+        "Name": "Ann Wanjiru",
+        "Location": "Karen",
+        "Status": "Pending"
+    },
+    {
+        "ID": "VID_033",
+        "Name": "Simon Ndirangu",
+        "Location": "Lang'ata",
+        "Status": "Verified"
+    },
+    {
+        "ID": "VID_034",
+        "Name": "Phyllis Okoth",
+        "Location": "Westlands",
+        "Status": "Not Verified"
+    },
+    {
+        "ID": "VID_035",
+        "Name": "Timothy Mbuvi",
+        "Location": "Kilimani",
+        "Status": "Verified"
+    },
+    {
+        "ID": "VID_036",
+        "Name": "Ruth Nyambura",
+        "Location": "Eastleigh",
+        "Status": "Pending"
+    },
+    {
+        "ID": "VID_037",
+        "Name": "Vincent Mwangi",
+        "Location": "Ngong",
+        "Status": "Verified"
+    },
+    {
+        "ID": "VID_038",
+        "Name": "Joyce Akinyi",
+        "Location": "Thika Road",
+        "Status": "Not Verified"
+    },
+    {
+        "ID": "VID_039",
+        "Name": "Fredrick Ochieng",
+        "Location": "Umoja",
+        "Status": "Verified"
+    },
+    {
+        "ID": "VID_040",
+        "Name": "Margaret Wambui",
+        "Location": "Buruburu",
+        "Status": "Pending"
+    },
+    {
+        "ID": "VID_041",
+        "Name": "Julius Kariuki",
+        "Location": "Kileleshwa",
+        "Status": "Verified"
+    },
+    {
+        "ID": "VID_042",
+        "Name": "Beatrice Atieno",
+        "Location": "Embakasi",
+        "Status": "Not Verified"
+    },
+    {
+        "ID": "VID_043",
+        "Name": "Dennis Njenga",
+        "Location": "Lavington",
+        "Status": "Verified"
+    },
+    {
+        "ID": "VID_044",
+        "Name": "Caroline Mutheu",
+        "Location": "Kawangware",
+        "Status": "Pending"
+    },
+    {
+        "ID": "VID_045",
+        "Name": "Stephen Maina",
+        "Location": "Dagoretti",
+        "Status": "Verified"
+    },
+    {
+        "ID": "VID_046",
+        "Name": "Emily Chebet",
+        "Location": "Rongai",
+        "Status": "Not Verified"
+    },
+    {
+        "ID": "VID_047",
+        "Name": "Moses Omollo",
+        "Location": "Syokimau",
+        "Status": "Verified"
+    },
+    {
+        "ID": "VID_048",
+        "Name": "Jane Wanja",
+        "Location": "Kitengela",
+        "Status": "Pending"
+    },
+    {
+        "ID": "VID_049",
+        "Name": "Charles Njoroge",
+        "Location": "Tena",
+        "Status": "Verified"
+    },
+    {
+        "ID": "VID_050",
+        "Name": "Pamela Awino",
+        "Location": "Githurai",
+        "Status": "Not Verified"
+    }
+]

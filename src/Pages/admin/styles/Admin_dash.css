@@ -1,0 +1,340 @@
+/* Colours for  the page */
+:root {
+  --page-bg-start:   #0A1628;   
+  --page-bg-mid:     #0D4F72;   
+  --page-bg-end:     #1B8BB5;   
+
+  --card-bg:         #FFFFFF;
+  --card-radius:     20px;
+  --card-shadow:     0 8px 32px rgba(10, 22, 40, 0.22);
+
+  --header-bg:       #0A1628;   
+  --header-text:     #FFFFFF;
+
+  --accent:          #0D9BC4;   
+  --accent-light:    #E8F6FB;   
+  --accent-hover:    #0A7FA8;
+
+  --text-primary:    #0A1628;
+  --text-secondary:  #5B6F80;
+  --text-muted:      #94A3B0;
+
+  --divider:         #DDF0F7;
+  --row-alt:         #F4FBFE;
+  --row-hover-bg:    #EAF6FC;
+  --row-hover-border:#0D9BC4;
+
+  --revenue-color:   #15803D;
+
+  --transition:      0.18s ease;
+}
+
+.admin-body {
+  background:#071120;
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+}
+
+
+.main-body {
+  width: 100%;
+  max-width: 1040px;
+  padding: 48px 24px 72px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  box-sizing: border-box;
+}
+
+
+.dash-title {
+  font-size: 50px;
+  font-weight: 800;
+  color: #FFFFFF;
+  margin: 0 0 10px;
+  letter-spacing: -0.5px;
+  text-align: center;
+  text-shadow: 0 2px 12px rgba(10, 22, 40, 0.4);
+}
+
+
+.dash-title::after {
+  content: '';
+  display: block;
+  width: 48px;
+  height: 3px;
+  background: var(--accent);
+  border-radius: 99px;
+  margin: 10px auto 28px;
+}
+
+
+.orders-container,
+.vendor-container,
+.analytics-section {
+  background: var(--card-bg);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
+  padding: 0 0 24px;
+  margin-bottom: 24px;
+  overflow: hidden;
+  width: 100%;
+  flex-shrink: 0;
+}
+
+
+.table-header-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px 14px;
+  border-bottom: 2px solid var(--divider);
+  margin-bottom: 0;
+}
+
+.table-heading,
+.vendor-container h2 {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+
+.orders-table,
+.vendor-table {
+  width: 100%;
+  border-collapse: collapse;
+  display: block;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.orders-table thead,
+.orders-table tbody,
+.orders-table tr,
+.vendor-table thead,
+.vendor-table tbody,
+.vendor-table tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+
+.orders-table th,
+.vendor-table th {
+  background: var(--header-bg);
+  color: var(--header-text);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  text-align: left;
+  padding: 13px 20px;
+}
+
+
+.orders-table th:first-child,
+.vendor-table th:first-child {
+  padding-left: 24px;
+}
+
+.orders-table td,
+.vendor-table td {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--divider);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.orders-table td:first-child,
+.vendor-table td:first-child {
+  padding-left: 24px;
+}
+
+
+.order-row:nth-child(even),
+.vendor-row:nth-child(even) {
+  background: var(--row-alt);
+}
+
+
+.order-row,
+.vendor-row {
+  transition: background-color var(--transition), box-shadow var(--transition);
+  border-left: 3px solid transparent;
+}
+
+.order-row:hover,
+.vendor-row:hover {
+  background: var(--row-hover-bg);
+  border-left-color: var(--row-hover-border);
+}
+
+
+.order-row:last-child td,
+.vendor-row:last-child td {
+  border-bottom: none;
+}
+
+
+.order-id,
+.vendor-id {
+  font-weight: 700;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.amount {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.status,
+.vendor-status {
+  font-weight: 600;
+}
+
+
+.table-footer {
+  padding: 10px 24px 0;
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+
+.view-all-btn {
+  background: var(--accent);
+  color: #ffffff;
+  border: none;
+  padding: 8px 22px;
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  transition: background-color var(--transition), transform var(--transition),
+              box-shadow var(--transition);
+  box-shadow: 0 2px 8px rgba(13, 155, 196, 0.30);
+}
+
+.view-all-btn:hover {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(13, 155, 196, 0.40);
+}
+
+
+.analytics-section {
+  background: linear-gradient(135deg, #EAF6FC 0%, #FFFFFF 100%);
+  padding: 0;
+}
+
+.analytics-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 36px 28px 32px;
+  text-align: center;
+  gap: 24px;
+}
+
+
+.analytics-container > * + * {
+  border-left: 1px solid var(--divider);
+  padding-left: 32px;
+}
+
+.total-revenue,
+.total-orders {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.total-revenue h4,
+.total-orders h4 {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.total-revenue p,
+.total-orders p {
+  font-size: 40px;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0;
+  letter-spacing: -1px;
+  font-variant-numeric: tabular-nums;
+}
+
+.total-revenue p {
+  color: var(--revenue-color);
+}
+
+/* ─── Responsive ─────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .main-body {
+    padding: 32px 14px 48px;
+  }
+
+  .dash-title {
+    font-size: 22px;
+  }
+
+  .table-header-wrapper {
+    padding: 16px 16px 12px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .orders-table th,
+  .vendor-table th {
+    font-size: 10px;
+    padding: 11px 12px;
+  }
+
+  .orders-table td,
+  .vendor-table td {
+    font-size: 12.5px;
+    padding: 11px 12px;
+  }
+
+  .orders-table td:first-child,
+  .vendor-table td:first-child,
+  .orders-table th:first-child,
+  .vendor-table th:first-child {
+    padding-left: 14px;
+  }
+
+  .analytics-container {
+    padding: 28px 16px 24px;
+  }
+
+  .total-revenue p,
+  .total-orders p {
+    font-size: 26px;
+  }
+}

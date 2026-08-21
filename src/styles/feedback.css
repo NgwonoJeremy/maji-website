@@ -1,0 +1,82 @@
+.feedback-panel {
+  grid-column: span 12;
+}
+
+.feedback-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.03);
+  padding: 1rem;
+}
+
+.feedback-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.feedback-summary h3,
+.feedback-summary p {
+  margin-bottom: 0.25rem;
+}
+
+.feedback-summary span {
+  color: var(--blue-light);
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+
+.feedback-form {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 1rem;
+}
+
+.feedback-field {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.feedback-field select,
+.feedback-field textarea {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  padding: 0.75rem;
+  font-family: 'Inter', sans-serif;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.feedback-field select:focus,
+.feedback-field textarea:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.12);
+  outline: none;
+}
+
+.feedback-field textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.feedback-field select option {
+  color: #222;
+  background: #ffffff;
+}
+
+.feedback-message {
+  margin-top: 0.75rem;
+  color: var(--blue-light);
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .feedback-form {
+    grid-template-columns: 1fr;
+  }
+}

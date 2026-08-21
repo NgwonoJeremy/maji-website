@@ -1,0 +1,22 @@
+:root {
+  
+  --bg: #0A1628;
+  --bg-mid: #0f2a4a;
+  --bg-card: #112236;
+  --text: #F5F8FF;
+  --text-muted: #8CA3C0;
+  --blue: #2196F3;
+  --blue-light: #64B5F6;
+  --blue-dim: rgba(33, 150, 243, 0.15);
+  --radius: 12px;
+  --radius-lg: 20px;
+  --transition: 0.2s ease;
+  
+  --border: rgba(255, 255, 255, 0.06);
+  --card: #112236;
+  --muted: #8CA3C0;
+  --shadow: rgba(33, 150, 243, 0.15);
+  --danger: #f44336;
+  --success: #4CAF50;
+  --warning: #FFC107;
+}

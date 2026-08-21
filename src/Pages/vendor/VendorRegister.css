@@ -1,0 +1,184 @@
+.vr-centered-container {
+  font-family: system-ui, -apple-system, sans-serif;
+  background-color: #f1f5f9;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  box-sizing: border-box;
+}
+
+.vr-form-card {
+  background-color: #ffffff;
+  width: 100%;
+  max-width: 520px;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+  border: 1px solid #e2e8f0;
+  box-sizing: border-box;
+}
+
+.vr-success-card {
+  background-color: #ffffff;
+  width: 100%;
+  max-width: 460px;
+  padding: 2.5rem 2rem;
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+  border: 1px solid #e2e8f0;
+  box-sizing: border-box;
+}
+
+.vr-success-emoji {
+  font-size: 3.5rem;
+  margin-bottom: 1rem;
+}
+
+.vr-success-title {
+  color: #16a34a;
+  margin: 0 0 0.5rem 0;
+}
+
+.vr-success-text {
+  color: #475569;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.vr-success-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.vr-form-title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.vr-form-subtitle {
+  margin: 0.4rem 0 0 0;
+  font-size: 0.9rem;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+.vr-form-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.vr-dashboard-link-btn {
+  background: none;
+  border: none;
+  color: #2563eb;
+  font-size: 0.85rem;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  text-decoration: underline;
+}
+
+.vr-form-group {
+  margin-bottom: 1.25rem;
+  text-align: left;
+}
+
+.vr-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.vr-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #475569;
+  margin-bottom: 0.4rem;
+}
+
+.vr-input {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+  color: #334155;
+}
+
+.vr-select {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+  background-color: #ffffff;
+  color: #334155;
+}
+
+.vr-submit-btn {
+  width: 100%;
+  padding: 0.85rem;
+  background-color: #2563eb;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+.vr-submit-btn--disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.vr-submit-btn--no-margin {
+  margin-top: 0;
+}
+
+.vr-submit-btn--gray {
+  background-color: #64748b;
+}
+
+.vr-submit-btn--inline {
+  padding: 0 1rem;
+  width: auto;
+}
+
+.vr-error-text {
+  color: #dc2626;
+  font-size: 0.8rem;
+  margin: 0.35rem 0 0 0;
+}
+
+.vr-estate-add-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.vr-terms-group {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+}
+
+.vr-terms-checkbox {
+  margin-top: 0.2rem;
+}
+
+.vr-terms-label {
+  font-size: 0.85rem;
+  color: #475569;
+  line-height: 1.4;
+  cursor: pointer;
+}

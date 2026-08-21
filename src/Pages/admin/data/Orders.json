@@ -1,0 +1,402 @@
+[
+    {
+        "ID": "OD_001",
+        "Customer": "Grace Muthoni",
+        "Location": "Kasarani",
+        "Capacity": "60L",
+        "Amount": "Ksh. 30",
+        "Status": "Delivered"
+    },
+    {
+        "ID": "OD_002",
+        "Customer": "James Ochieng",
+        "Location": "Lang'ata",
+        "Capacity": "120L",
+        "Amount": "Ksh. 60",
+        "Status": "On the way"
+    },
+    {
+        "ID": "OD_003",
+        "Customer": "Mary Wanjiru",
+        "Location": "Ruiru",
+        "Capacity": "400L",
+        "Amount": "Ksh. 200",
+        "Status": "Delivered"
+    },
+    {
+        "ID": "OD_004",
+        "Customer": "Peter Kimani",
+        "Location": "South C",
+        "Capacity": "200L",
+        "Amount": "Ksh. 100",
+        "Status": "Pending"
+    },
+    {
+        "ID": "OD_005",
+        "Customer": "Sarah Akinyi",
+        "Location": "Westlands",
+        "Capacity": "80L",
+        "Amount": "Ksh. 40",
+        "Status": "Yet to be confirmed"
+    },
+    {
+        "ID": "OD_006",
+        "Customer": "David Odhiambo",
+        "Location": "Karen",
+        "Capacity": "150L",
+        "Amount": "Ksh. 75",
+        "Status": "On the way"
+    },
+    {
+        "ID": "OD_007",
+        "Customer": "Lucy Wambui",
+        "Location": "Kilimani",
+        "Capacity": "300L",
+        "Amount": "Ksh. 150",
+        "Status": "Delivered"
+    },
+    {
+        "ID": "OD_008",
+        "Customer": "Michael Kiprop",
+        "Location": "Eastleigh",
+        "Capacity": "100L",
+        "Amount": "Ksh. 50",
+        "Status": "Pending"
+    },
+    {
+        "ID": "OD_009",
+        "Customer": "Faith Chelangat",
+        "Location": "Ngong",
+        "Capacity": "250L",
+        "Amount": "Ksh. 125",
+        "Status": "Yet to be confirmed"
+    },
+    {
+        "ID": "OD_010",
+        "Customer": "Samuel Mwangi",
+        "Location": "Thika Road",
+        "Capacity": "180L",
+        "Amount": "Ksh. 90",
+        "Status": "On the way"
+    },
+    {
+        "ID": "OD_011",
+        "Customer": "Jane Atieno",
+        "Location": "Umoja",
+        "Capacity": "90L",
+        "Amount": "Ksh. 45",
+        "Status": "Delivered"
+    },
+    {
+        "ID": "OD_012",
+        "Customer": "Robert Omondi",
+        "Location": "Buruburu",
+        "Capacity": "350L",
+        "Amount": "Ksh. 175",
+        "Status": "Pending"
+    },
+    {
+        "ID": "OD_013",
+        "Customer": "Esther Njoroge",
+        "Location": "Kileleshwa",
+        "Capacity": "70L",
+        "Amount": "Ksh. 35",
+        "Status": "On the way"
+    },
+    {
+        "ID": "OD_014",
+        "Customer": "John Kamau",
+        "Location": "Embakasi",
+        "Capacity": "220L",
+        "Amount": "Ksh. 110",
+        "Status": "Delivered"
+    },
+    {
+        "ID": "OD_015",
+        "Customer": "Catherine Wanjiku",
+        "Location": "Lavington",
+        "Capacity": "160L",
+        "Amount": "Ksh. 80",
+        "Status": "Yet to be confirmed"
+    },
+    {
+        "ID": "OD_016",
+        "Customer": "Daniel Mutua",
+        "Location": "Kawangware",
+        "Capacity": "130L",
+        "Amount": "Ksh. 65",
+        "Status": "Pending"
+    },
+    {
+        "ID": "OD_017",
+        "Customer": "Florence Adhiambo",
+        "Location": "Dagoretti",
+        "Capacity": "280L",
+        "Amount": "Ksh. 140",
+        "Status": "On the way"
+    },
+    {
+        "ID": "OD_018",
+        "Customer": "George Otieno",
+        "Location": "Rongai",
+        "Capacity": "190L",
+        "Amount": "Ksh. 95",
+        "Status": "Delivered"
+    },
+    {
+        "ID": "OD_019",
+        "Customer": "Alice Muthoni",
+        "Location": "Syokimau",
+        "Capacity": "110L",
+        "Amount": "Ksh. 55",
+        "Status": "Yet to be confirmed"
+    },
+    {
+        "ID": "OD_020",
+        "Customer": "Thomas Kibet",
+        "Location": "Kitengela",
+        "Capacity": "320L",
+        "Amount": "Ksh. 160",
+        "Status": "Pending"
+    },
+    {
+        "ID": "OD_021",
+        "Customer": "Susan Achieng",
+        "Location": "Tena",
+        "Capacity": "75L",
+        "Amount": "Ksh. 37.50",
+        "Status": "Delivered"
+    },
+    {
+        "ID": "OD_022",
+        "Customer": "Brian Mwenda",
+        "Location": "Githurai",
+        "Capacity": "450L",
+        "Amount": "Ksh. 225",
+        "Status": "On the way"
+    },
+    {
+        "ID": "OD_023",
+        "Customer": "Rose Kemunto",
+        "Location": "Kangemi",
+        "Capacity": "140L",
+        "Amount": "Ksh. 70",
+        "Status": "Yet to be confirmed"
+    },
+    {
+        "ID": "OD_024",
+        "Customer": "Patrick Njuguna",
+        "Location": "Muthaiga",
+        "Capacity": "380L",
+        "Amount": "Ksh. 190",
+        "Status": "Delivered"
+    },
+    {
+        "ID": "OD_025",
+        "Customer": "Dorothy Wairimu",
+        "Location": "Parklands",
+        "Capacity": "85L",
+        "Amount": "Ksh. 42.50",
+        "Status": "Pending"
+    },
+    {
+        "ID": "OD_026",
+        "Customer": "Eliud Kipchoge",
+        "Location": "Eldoret (Nairobi Area)",
+        "Capacity": "500L",
+        "Amount": "Ksh. 250",
+        "Status": "On the way"
+    },
+    {
+        "ID": "OD_027",
+        "Customer": "Mildred Adhiambo",
+        "Location": "Imara Daima",
+        "Capacity": "95L",
+        "Amount": "Ksh. 47.50",
+        "Status": "Delivered"
+    },
+    {
+        "ID": "OD_028",
+        "Customer": "Joseph Kuria",
+        "Location": "Ruiru",
+        "Capacity": "270L",
+        "Amount": "Ksh. 135",
+        "Status": "Yet to be confirmed"
+    },
+    {
+        "ID": "OD_029",
+        "Customer": "Mercy Jepkosgei",
+        "Location": "Kasarani",
+        "Capacity": "310L",
+        "Amount": "Ksh. 155",
+        "Status": "Pending"
+    },
+    {
+        "ID": "OD_030",
+        "Customer": "Kennedy Oduor",
+        "Location": "South B",
+        "Capacity": "205L",
+        "Amount": "Ksh. 102.50",
+        "Status": "On the way"
+    },
+    {
+        "ID": "OD_031",
+        "Customer": "Ann Wanjiru",
+        "Location": "Karen",
+        "Capacity": "115L",
+        "Amount": "Ksh. 57.50",
+        "Status": "Delivered"
+    },
+    {
+        "ID": "OD_032",
+        "Customer": "Simon Ndirangu",
+        "Location": "Lang'ata",
+        "Capacity": "425L",
+        "Amount": "Ksh. 212.50",
+        "Status": "Yet to be confirmed"
+    },
+    {
+        "ID": "OD_033",
+        "Customer": "Phyllis Okoth",
+        "Location": "Westlands",
+        "Capacity": "165L",
+        "Amount": "Ksh. 82.50",
+        "Status": "Pending"
+    },
+    {
+        "ID": "OD_034",
+        "Customer": "Timothy Mbuvi",
+        "Location": "Kilimani",
+        "Capacity": "235L",
+        "Amount": "Ksh. 117.50",
+        "Status": "Delivered"
+    },
+    {
+        "ID": "OD_035",
+        "Customer": "Ruth Nyambura",
+        "Location": "Eastleigh",
+        "Capacity": "195L",
+        "Amount": "Ksh. 97.50",
+        "Status": "On the way"
+    },
+    {
+        "ID": "OD_036",
+        "Customer": "Vincent Mwangi",
+        "Location": "Ngong",
+        "Capacity": "285L",
+        "Amount": "Ksh. 142.50",
+        "Status": "Yet to be confirmed"
+    },
+    {
+        "ID": "OD_037",
+        "Customer": "Joyce Akinyi",
+        "Location": "Thika Road",
+        "Capacity": "155L",
+        "Amount": "Ksh. 77.50",
+        "Status": "Pending"
+    },
+    {
+        "ID": "OD_038",
+        "Customer": "Fredrick Ochieng",
+        "Location": "Umoja",
+        "Capacity": "340L",
+        "Amount": "Ksh. 170",
+        "Status": "Delivered"
+    },
+    {
+        "ID": "OD_039",
+        "Customer": "Margaret Wambui",
+        "Location": "Buruburu",
+        "Capacity": "260L",
+        "Amount": "Ksh. 130",
+        "Status": "On the way"
+    },
+    {
+        "ID": "OD_040",
+        "Customer": "Julius Kariuki",
+        "Location": "Kileleshwa",
+        "Capacity": "210L",
+        "Amount": "Ksh. 105",
+        "Status": "Yet to be confirmed"
+    },
+    {
+        "ID": "OD_041",
+        "Customer": "Beatrice Atieno",
+        "Location": "Embakasi",
+        "Capacity": "175L",
+        "Amount": "Ksh. 87.50",
+        "Status": "Pending"
+    },
+    {
+        "ID": "OD_042",
+        "Customer": "Dennis Njenga",
+        "Location": "Lavington",
+        "Capacity": "225L",
+        "Amount": "Ksh. 112.50",
+        "Status": "Delivered"
+    },
+    {
+        "ID": "OD_043",
+        "Customer": "Caroline Mutheu",
+        "Location": "Kawangware",
+        "Capacity": "325L",
+        "Amount": "Ksh. 162.50",
+        "Status": "On the way"
+    },
+    {
+        "ID": "OD_044",
+        "Customer": "Stephen Maina",
+        "Location": "Dagoretti",
+        "Capacity": "135L",
+        "Amount": "Ksh. 67.50",
+        "Status": "Yet to be confirmed"
+    },
+    {
+        "ID": "OD_045",
+        "Customer": "Emily Chebet",
+        "Location": "Rongai",
+        "Capacity": "375L",
+        "Amount": "Ksh. 187.50",
+        "Status": "Delivered"
+    },
+    {
+        "ID": "OD_046",
+        "Customer": "Moses Omollo",
+        "Location": "Syokimau",
+        "Capacity": "245L",
+        "Amount": "Ksh. 122.50",
+        "Status": "Pending"
+    },
+    {
+        "ID": "OD_047",
+        "Customer": "Jane Wanja",
+        "Location": "Kitengela",
+        "Capacity": "185L",
+        "Amount": "Ksh. 92.50",
+        "Status": "On the way"
+    },
+    {
+        "ID": "OD_048",
+        "Customer": "Charles Njoroge",
+        "Location": "Tena",
+        "Capacity": "295L",
+        "Amount": "Ksh. 147.50",
+        "Status": "Yet to be confirmed"
+    },
+    {
+        "ID": "OD_049",
+        "Customer": "Pamela Awino",
+        "Location": "Githurai",
+        "Capacity": "125L",
+        "Amount": "Ksh. 62.50",
+        "Status": "Delivered"
+    },
+    {
+        "ID": "OD_050",
+        "Customer": "George Kamotho",
+        "Location": "Kangemi",
+        "Capacity": "365L",
+        "Amount": "Ksh. 182.50",
+        "Status": "Pending"
+    }
+]
