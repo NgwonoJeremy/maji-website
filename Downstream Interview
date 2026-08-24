@@ -1,0 +1,18 @@
+What data or actions from Maji would be useful to you?
+•	Customer Location
+•	Vendor station and Primary Target estate
+•	Order Information to HR
+
+Would you ever need to create or change data in our system, or only read it?
+•	Only Read
+How often would you need this - once per page load? Real-time?
+•	Once per user session
+Is there anything about our app you assumed you could access, that isn’t there? 
+•	None since the requirements are specific
+API Needs Statement
+1. SkillBridge needs to read a list of Maji customer estates with active delivery schedules, to recommend local skill-exchange sessions to users in the same neighborhoods.
+2. SkillBridge needs to read each water vendor's station name and primary target estate, to suggest those vendor locations as physical meetup venues for skill sessions.
+3. SkillBridge needs to read the daily delivery volume (liters) per estate, to prioritize advertising skill sessions in high-water-demand areas where more residents are active.
+4. SkillBridge needs to read Maji customers' M-Pesa payment history (payment method only, not amount)
+5.SkillBridge needs to read delivery time windows (e.g., morning/afternoon) per estate, to schedule skill session reminders during waiting periods when customers are likely free.
+
