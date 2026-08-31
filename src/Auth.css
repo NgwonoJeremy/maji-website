@@ -1,4 +1,4 @@
-/* @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500&display=swap');
 .auth-page {
   min-height: 100vh;
   display: flex;
@@ -9,7 +9,7 @@
 }
 .auth-section {
   width: 100%;
-  max-width: 420px;
+  max-width: 620px;
 }
 .auth-card {
   background: #112236;
@@ -88,4 +88,97 @@
   gap: 0.5rem;
   cursor: pointer;
   white-space: nowrap;
-} */
+}
+
+.error-message {
+  font-size: 0.78rem;
+  color: #F87171;
+}
+
+/* Password show/hide toggle (Login) */
+.password-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input-wrap input {
+  padding-right: 3.2rem;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  color: #8CA3C0;
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0.2rem 0.3rem;
+}
+
+.password-toggle:hover { color: #F5F8FF; }
+
+/* Small helper text under a field (Register) */
+.field-hint {
+  font-size: 0.76rem;
+  color: #3d5470;
+}
+
+/* Vendor business-info block (Register) */
+.business-section {
+  margin-top: 0.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.section-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0.25rem 0 0;
+}
+
+.section-divider::before,
+.section-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.section-divider span {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #8CA3C0;
+  white-space: nowrap;
+}
+
+/* Multi-select estate checkboxes (Register, vendor role) */
+.estate-checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 0.85rem 0.9rem;
+}
+
+.estate-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.88rem;
+  color: #F5F8FF;
+  cursor: pointer;
+}
+
+.estate-checkbox input {
+  width: auto;
+  accent-color: #2196F3;
+}

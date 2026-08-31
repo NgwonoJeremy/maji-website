@@ -14,7 +14,7 @@ function Home() {
         <nav className="nav">
           <a href="#who">Who Are We?</a>
           <a href="#what">How It Works</a>
-          <Link to="/Roles" className="nav-cta">Get Started</Link>
+          <Link to="/Login" className="nav-cta">Get Started</Link>
         </nav>
       </header>
 
@@ -33,7 +33,7 @@ function Home() {
             Running low on water? Order jerricans from verified vendors near you.
           </p>
           <div className="hero-actions">
-            <Link to="/Roles">
+            <Link to="/Login">
               <button className="btn-primary">Get started</button>
             </Link>
           </div>
