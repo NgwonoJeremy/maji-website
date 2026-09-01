@@ -3,12 +3,6 @@ import { useState } from "react";
 import "../Auth.css";
 
 // TODO: replace with a real fetch to your `estates` table (id, name)
-const ESTATES = [
-  { id: 1, name: "Greenwood Estates" },
-  { id: 2, name: "Riverside Gardens" },
-  { id: 3, name: "Sunset Ridge" },
-  { id: 4, name: "Palm Grove" },
-];
 
 const validate = (role, fields) => {
   const errors = {};
@@ -40,8 +34,8 @@ const validate = (role, fields) => {
     if (!fields.dailyCapacity || Number(fields.dailyCapacity) <= 0) {
       errors.dailyCapacity = "Enter a valid daily capacity";
     }
-    if (fields.targetEstates.length === 0) {
-      errors.targetEstates = "Select at least one estate";
+    if (!fields.targetEstates.trim()) {
+      errors.targetEstates = "Enter the estate you want to serve";
     }
   }
 
@@ -58,7 +52,7 @@ function Register() {
     password: "",
     businessName: "",
     dailyCapacity: "",
-    targetEstates: [],
+    targetEstates:"",
   });
   const [errors, setErrors] = useState({});
   const [authError, setAuthError] = useState("");
@@ -69,17 +63,6 @@ function Register() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const toggleEstate = (estateId) => {
-    setFormData((f) => {
-      const has = f.targetEstates.includes(estateId);
-      return {
-        ...f,
-        targetEstates: has
-          ? f.targetEstates.filter((id) => id !== estateId)
-          : [...f.targetEstates, estateId],
-      };
-    });
-  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -121,7 +104,7 @@ function Register() {
             password: formData.password,
             business_name: formData.businessName,
             capacity_liters: Number(formData.dailyCapacity),
-            estate_ids: formData.targetEstates,
+            estate_served: formData.targetEstates,
             verification_status: "pending",
           };
 
@@ -254,21 +237,22 @@ function Register() {
                   {errors.dailyCapacity && <span className="error-message">{errors.dailyCapacity}</span>}
                 </div>
 
-                <div className="input-group">
-                  <label>Estates you'll serve</label>
-                  <div className="estate-checklist">
-                    {ESTATES.map((estate) => (
-                      <label key={estate.id} className="estate-checkbox">
-                        <input
-                          type="checkbox"
-                          checked={formData.targetEstates.includes(estate.id)}
-                          onChange={() => toggleEstate(estate.id)}
-                        />
-                        <span>{estate.name}</span>
-                      </label>
-                    ))}
-                  </div>
-                  {errors.targetEstates && <span className="error-message">{errors.targetEstates}</span>}
+                <div>
+                  <label htmlFor="targetEstates">Estate / Area you serve</label>
+                  <input
+                    id="targetEstates"
+                    name="targetEstates"
+                    type="text"
+                    placeholder="e.g. Kasarani, Rongai, Kahawa"
+                    value={formData.targetEstates}
+                    onChange={handleChange}
+                  />
+                  <span className="field-hint">
+                    You can list multiple areas separated by commas.
+                  </span>
+                  {errors.targetEstates && (
+                    <span className="error-message">{errors.targetEstates}</span>
+                  )}
                 </div>
               </div>
             )}
