@@ -39,7 +39,7 @@ router.post("/register",async(req,res)=> {
     if (role === "vendor") {
         await db.query(
             `INSERT INTO vendors
-            (user_id, vehicle_type,business_name, daily_capacity,estates_served)
+            (user_id, business_name, daily_capacity,estates_served)
             VALUES (?,?,?,?,?)`,
             [
                 newId,
@@ -51,7 +51,7 @@ router.post("/register",async(req,res)=> {
     }
     const token=jwt.sign(
         {id:newId,role:role},
-        process.env,JWT_SECRET,
+        process.env.JWT_SECRET,
         {expiresIn: "7d"}
     );
 
@@ -92,7 +92,7 @@ router.post("/login",async(req,res) => {
   }
   const token=jwt.sign(
     {id:customers.id, role:customers.role },
-    process.env,JWT_SECRET,
+    process.env.JWT_SECRET,
     { expiresIn:"7d"}
   );
 
