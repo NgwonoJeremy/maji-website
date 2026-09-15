@@ -10,20 +10,36 @@ import VendorRegister from './Pages/vendor/VendorRegister';
 import VendorDashboard from './Pages/vendor/VendorDashboard';
 import Login from './Pages/Login';
 import Register from './Pages/Register';
+import ProtectedRoute from "./Components/ProtectedRoute";
 function App() {
   return (
     <div className="app">
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/customer" element={<CustomerDashboard />} />
-          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path ="/customer" element={
+            <ProtectedRoute allowedRole="customer">
+              <CustomerDashboard/>
+            </ProtectedRoute>
+          }/>
+
+          <Route path ="/admin" element={
+            <ProtectedRoute allowedRole="admin">
+              <AdminDashboard/>
+            </ProtectedRoute>
+          }/>
+
           <Route path="/orders" element={<AllOrders />} />
           <Route path="/vendors" element={<AllVendors />} />
           <Route path="/vendor/register" element={<VendorRegister />} />
-          <Route path="/vendor/dashboard" element={<VendorDashboard />} />
-          <Route path="/Login" element={<Login />} />
-          <Route path="/Register" element={<Register/>} />
+
+          <Route path ="/vendor/dashboard" element={
+            <ProtectedRoute allowedRole="vendor">
+              <VendorDashboard/>
+            </ProtectedRoute>
+          }/>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register/>} />
         </Routes>
       </BrowserRouter>
     </div>

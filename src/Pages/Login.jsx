@@ -30,7 +30,7 @@ function Login() {
     if (authError) setAuthError("");
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
     setAuthError("");
 
@@ -42,24 +42,32 @@ function Login() {
     setErrors({});
     setLoading(true);
 
-    // Same "JSON file" stand-in Register.jsx writes to: localStorage["maji_users"]
-    const users = JSON.parse(localStorage.getItem("maji_users") || "[]");
-    const match = users.find(
-      (u) => u.email === formData.email && u.password === formData.password
-    );
+    try {
+      const response= await fetch ("http://localhost:3001/api/auth/login",{
+        method:"POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
+      const data = await response.json();
+      if(!response.ok) {
+        setAuthError (data.message || "Login Failed");
+        return;
+      }
 
-    setLoading(false);
+      localStorage.setItem("maji_token",data.token);
+      localStorage.setItem("maji_user",JSON.stringify(data.user));
 
-    if (!match) {
-      setAuthError("Invalid email or password");
-      return;
+      if (data.user.role === "admin")    navigate("/admin");
+      if (data.user.role === "vendor")   navigate("/vendor/dashboard");
+      if (data.user.role === "customer") navigate("/customer");
+    }catch (err) {
+      setAuthError("Cannot connect to server.Please try again.");
+    } finally {
+      setLoading(false);
     }
-
-    localStorage.setItem("maji_user", JSON.stringify(match));
-
-    if (match.role === "admin")    navigate("/admin");
-    if (match.role === "vendor")   navigate("/vendor/dashboard");
-    if (match.role === "customer") navigate("/customer");
   };
 
   return (

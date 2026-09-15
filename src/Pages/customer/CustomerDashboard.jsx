@@ -1,8 +1,7 @@
 import Navbar from "../../components/Navbar";
 import OrderWater from "./OrderWater";
 import Payment from './Payment';
-import OrderHistory from "./OrderHistory";
-import Feedback from "./Feedback";
+import OrderHistory from "./OrderHistory"; 
 import TrackOrder from "./TrackOrder";
 
 function CustomerDashboard() {
@@ -16,7 +15,6 @@ function CustomerDashboard() {
           <Payment />
           <OrderHistory />
           <TrackOrder />
-          <Feedback />
         </div>
       </section>
     </main>

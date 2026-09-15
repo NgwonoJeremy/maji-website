@@ -2,7 +2,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import "../Auth.css";
 
-// TODO: replace with a real fetch to your `estates` table (id, name)
 
 const validate = (role, fields) => {
   const errors = {};
@@ -56,6 +55,7 @@ function Register() {
   });
   const [errors, setErrors] = useState({});
   const [authError, setAuthError] = useState("");
+  const [loading, setLoading]=useState(false);
 
   const isVendor = role === "vendor";
 
@@ -64,9 +64,10 @@ function Register() {
   };
 
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setAuthError("");
+
 
     const fieldErrors = validate(role, formData);
     if (Object.keys(fieldErrors).length > 0) {
@@ -74,45 +75,39 @@ function Register() {
       return;
     }
     setErrors({});
+    setLoading(true);
 
-    // "JSON file" stand-in for the real users table until the API is wired up
-    const storageKey = "maji_users";
-    const users = JSON.parse(localStorage.getItem(storageKey) || "[]");
+    try {
+      const response =await fetch ("http://localhost:3001/api/auth/register", {
+        method: "POST",
+        headers: {"Content-type" : "application/json"},
+        body: JSON.stringify({
+          name: formData.fullName,
+          email: formData.email,
+          phone: formData.phone,
+          password: formData.password,
+          role: role,
+          businessName:formData.businessName,
+          dailycapacity: Number(formData.dailyCapacity),
+          estatesServed: formData.targetEstates,
+        }),
+      });
+      const data = await response.json();
+      if(!response.ok) {
+        setAuthError(data.message || "Registration failed");
+        return;
+      }
+      localStorage.setItem("maji_token", data.token);
+      localStorage.setItem("maji_user", JSON.stringify(data.user));
+      
+      if (role === "vendor") navigate("/vendor/dashboard");
+      if (role === "customer") navigate("/customer");
 
-    const emailTaken = users.some((u) => u.email === formData.email);
-    if (emailTaken) {
-      setAuthError("An account with this email already exists");
-      return;
+    } catch (err) {
+      setAuthError("Cannot connect to server.Please try again");
+    } finally {
+      setLoading(false);
     }
-
-    const newUser =
-      role === "customer"
-        ? {
-            id: Date.now(),
-            role,
-            full_name: formData.fullName,
-            email: formData.email,
-            phone: formData.phone,
-            password: formData.password, // placeholder only — real API hashes this server-side
-          }
-        : {
-            id: Date.now(),
-            role,
-            owner_name: formData.fullName,
-            email: formData.email,
-            phone: formData.phone,
-            password: formData.password,
-            business_name: formData.businessName,
-            capacity_liters: Number(formData.dailyCapacity),
-            estate_served: formData.targetEstates,
-            verification_status: "pending",
-          };
-
-    localStorage.setItem(storageKey, JSON.stringify([...users, newUser]));
-    localStorage.setItem("maji_user", JSON.stringify(newUser));
-
-    if (role === "vendor") navigate("/vendor/dashboard");
-    if (role === "customer") navigate("/customer");
   };
 
   return (
