@@ -1,7 +1,7 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import Vendors from '../admin/data/Vendor.json';
+import { useNavigate } from 'react-router-dom';;
 import './styles/AllVendors.css';
+import Vendors from '../admin/data/vendors.json';
 
 const AllVendors = () => {
   const navigate = useNavigate();

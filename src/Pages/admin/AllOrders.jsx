@@ -1,8 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import Orders from '../admin/data/Orders.json';
 import './styles/AllOrders.css';
-
+import Orders from '../admin/data/orders.json';
 const AllOrders = () => {
   const navigate = useNavigate();
 

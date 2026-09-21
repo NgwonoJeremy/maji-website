@@ -1,0 +1,402 @@
+[
+  {
+    "name": "Derrick Otieno",
+    "email": "derrick.otieno.vendor@gmail.com",
+    "password": "Password123",
+    "phone": "0717919000",
+    "estate": "Kasarani",
+    "status": "Verified"
+  },
+  {
+    "name": "Christine Pauline",
+    "email": "christine.pauline.vendor@gmail.com",
+    "password": "Password123",
+    "phone": "0717926919",
+    "estate": "Madaraka",
+    "status": "Not Verified"
+  },
+  {
+    "name": "James Mwangi",
+    "email": "james.mwangi.vendor@gmail.com",
+    "password": "Password123",
+    "phone": "0717934838",
+    "estate": "Westlands",
+    "status": "Verified"
+  },
+  {
+    "name": "Sarah Akinyi",
+    "email": "sarah.akinyi.vendor@gmail.com",
+    "password": "Password123",
+    "phone": "0717942757",
+    "estate": "Lang'ata",
+    "status": "Pending"
+  },
+  {
+    "name": "Peter Kimani",
+    "email": "peter.kimani.vendor@gmail.com",
+    "password": "Password123",
+    "phone": "0717950676",
+    "estate": "Ruiru",
+    "status": "Verified"
+  },
+  {
+    "name": "Grace Wanjiru",
+    "email": "grace.wanjiru.vendor@gmail.com",
+    "password": "Password123",
+    "phone": "0717958595",
+    "estate": "Karen",
+    "status": "Not Verified"
+  },
+  {
+    "name": "David Odhiambo",
+    "email": "david.odhiambo.vendor@gmail.com",
+    "password": "Password123",
+    "phone": "0717966514",
+    "estate": "Kilimani",
+    "status": "Verified"
+  },
+  {
+    "name": "Mary Wambui",
+    "email": "mary.wambui.vendor@gmail.com",
+    "password": "Password123",
+    "phone": "0717974433",
+    "estate": "Eastleigh",
+    "status": "Pending"
+  },
+  {
+    "name": "Michael Kiprop",
+    "email": "michael.kiprop.vendor@gmail.com",
+    "password": "Password123",
+    "phone": "0717982352",
+    "estate": "Ngong",
+    "status": "Verified"
+  },
+  {
+    "name": "Faith Chelangat",
+    "email": "faith.chelangat.vendor@gmail.com",
+    "password": "Password123",
+    "phone": "0717990271",
+    "estate": "Thika Road",
+    "status": "Not Verified"
+  },
+  {
+    "name": "Samuel Mwangi",
+    "email": "samuel.mwangi.vendor@gmail.com",
+    "password": "Password123",
+    "phone": "0717998190",
+    "estate": "Umoja",
+    "status": "Verified"
+  },
+  {
+    "name": "Jane Atieno",
+    "email": "jane.atieno.vendor@gmail.com",
+    "password": "Password123",
+    "phone": "0718006109",
+    "estate": "Buruburu",
+    "status": "Pending"
+  },
+  {
+    "name": "Robert Omondi",
+    "email": "robert.omondi.vendor@gmail.com",
+    "password": "Password123",
+    "phone": "0718014028",
+    "estate": "Kileleshwa",
+    "status": "Verified"
+  },
+  {
+    "name": "Esther Njoroge",
+    "email": "esther.njoroge.vendor@gmail.com",
+    "password": "Password123",
+    "phone": "0718021947",
+    "estate": "Embakasi",
+    "status": "Not Verified"
+  },
+  {
+    "name": "John Kamau",
+    "email": "john.kamau.vendor@gmail.com",
+    "password": "Password123",
+    "phone": "0718029866",
+    "estate": "Lavington",
+    "status": "Verified"
+  },
+  {
+    "name": "Catherine Wanjiku",
+    "email": "catherine.wanjiku.vendor@gmail.com",
+    "password": "Password123",
+    "phone": "0718037785",
+    "estate": "Kawangware",
+    "status": "Pending"
+  },
+  {
+    "name": "Daniel Mutua",
+    "email": "daniel.mutua.vendor@gmail.com",
+    "password": "Password123",
+    "phone": "0718045704",
+    "estate": "Dagoretti",
+    "status": "Verified"
+  },
+  {
+    "name": "Florence Adhiambo",
+    "email": "florence.adhiambo.vendor@gmail.com",
+    "password": "Password123",
+    "phone": "0718053623",
+    "estate": "Rongai",
+    "status": "Not Verified"
+  },
+  {
+    "name": "George Otieno",
+    "email": "george.otieno.vendor@gmail.com",
+    "password": "Password123",
+    "phone": "0718061542",
+    "estate": "Syokimau",
+    "status": "Verified"
+  },
+  {
+    "name": "Alice Muthoni",
+    "email": "alice.muthoni.vendor@gmail.com",
+    "password": "Password123",
+    "phone": "0718069461",
+    "estate": "Kitengela",
+    "status": "Pending"
+  },
+  {
+    "name": "Thomas Kibet",
+    "email": "thomas.kibet.vendor@gmail.com",
+    "password": "Password123",
+    "phone": "0718077380",
+    "estate": "South C",
+    "status": "Verified"
+  },
+  {
+    "name": "Susan Achieng",
+    "email": "susan.achieng.vendor@gmail.com",
+    "password": "Password123",
+    "phone": "0718085299",
+    "estate": "Tena",
+    "status": "Not Verified"
+  },
+  {
+    "name": "Brian Mwenda",
+    "email": "brian.mwenda.vendor@gmail.com",
+    "password": "Password123",
+    "phone": "0718093218",
+    "estate": "Githurai",
+    "status": "Verified"
+  },
+  {
+    "name": "Rose Kemunto",
+    "email": "rose.kemunto.vendor@gmail.com",
+    "password": "Password123",
+    "phone": "0718101137",
+    "estate": "Kangemi",
+    "status": "Pending"
+  },
+  {
+    "name": "Patrick Njuguna",
+    "email": "patrick.njuguna.vendor@gmail.com",
+    "password": "Password123",
+    "phone": "0718109056",
+    "estate": "Muthaiga",
+    "status": "Verified"
+  },
+  {
+    "name": "Dorothy Wairimu",
+    "email": "dorothy.wairimu.vendor@gmail.com",
+    "password": "Password123",
+    "phone": "0718116975",
+    "estate": "Parklands",
+    "status": "Not Verified"
+  },
+  {
+    "name": "Eliud Kipchoge",
+    "email": "eliud.kipchoge.vendor@gmail.com",
+    "password": "Password123",
+    "phone": "0718124894",
+    "estate": "Eldoret (Nairobi Area)",
+    "status": "Verified"
+  },
+  {
+    "name": "Mildred Adhiambo",
+    "email": "mildred.adhiambo.vendor@gmail.com",
+    "password": "Password123",
+    "phone": "0718132813",
+    "estate": "Imara Daima",
+    "status": "Pending"
+  },
+  {
+    "name": "Joseph Kuria",
+    "email": "joseph.kuria.vendor@gmail.com",
+    "password": "Password123",
+    "phone": "0718140732",
+    "estate": "Ruiru",
+    "status": "Verified"
+  },
+  {
+    "name": "Mercy Jepkosgei",
+    "email": "mercy.jepkosgei.vendor@gmail.com",
+    "password": "Password123",
+    "phone": "0718148651",
+    "estate": "Kasarani",
+    "status": "Not Verified"
+  },
+  {
+    "name": "Kennedy Oduor",
+    "email": "kennedy.oduor.vendor@gmail.com",
+    "password": "Password123",
+    "phone": "0718156570",
+    "estate": "South B",
+    "status": "Verified"
+  },
+  {
+    "name": "Ann Wanjiru",
+    "email": "ann.wanjiru.vendor@gmail.com",
+    "password": "Password123",
+    "phone": "0718164489",
+    "estate": "Karen",
+    "status": "Pending"
+  },
+  {
+    "name": "Simon Ndirangu",
+    "email": "simon.ndirangu.vendor@gmail.com",
+    "password": "Password123",
+    "phone": "0718172408",
+    "estate": "Lang'ata",
+    "status": "Verified"
+  },
+  {
+    "name": "Phyllis Okoth",
+    "email": "phyllis.okoth.vendor@gmail.com",
+    "password": "Password123",
+    "phone": "0718180327",
+    "estate": "Westlands",
+    "status": "Not Verified"
+  },
+  {
+    "name": "Timothy Mbuvi",
+    "email": "timothy.mbuvi.vendor@gmail.com",
+    "password": "Password123",
+    "phone": "0718188246",
+    "estate": "Kilimani",
+    "status": "Verified"
+  },
+  {
+    "name": "Ruth Nyambura",
+    "email": "ruth.nyambura.vendor@gmail.com",
+    "password": "Password123",
+    "phone": "0718196165",
+    "estate": "Eastleigh",
+    "status": "Pending"
+  },
+  {
+    "name": "Vincent Mwangi",
+    "email": "vincent.mwangi.vendor@gmail.com",
+    "password": "Password123",
+    "phone": "0718204084",
+    "estate": "Ngong",
+    "status": "Verified"
+  },
+  {
+    "name": "Joyce Akinyi",
+    "email": "joyce.akinyi.vendor@gmail.com",
+    "password": "Password123",
+    "phone": "0718212003",
+    "estate": "Thika Road",
+    "status": "Not Verified"
+  },
+  {
+    "name": "Fredrick Ochieng",
+    "email": "fredrick.ochieng.vendor@gmail.com",
+    "password": "Password123",
+    "phone": "0718219922",
+    "estate": "Umoja",
+    "status": "Verified"
+  },
+  {
+    "name": "Margaret Wambui",
+    "email": "margaret.wambui.vendor@gmail.com",
+    "password": "Password123",
+    "phone": "0718227841",
+    "estate": "Buruburu",
+    "status": "Pending"
+  },
+  {
+    "name": "Julius Kariuki",
+    "email": "julius.kariuki.vendor@gmail.com",
+    "password": "Password123",
+    "phone": "0718235760",
+    "estate": "Kileleshwa",
+    "status": "Verified"
+  },
+  {
+    "name": "Beatrice Atieno",
+    "email": "beatrice.atieno.vendor@gmail.com",
+    "password": "Password123",
+    "phone": "0718243679",
+    "estate": "Embakasi",
+    "status": "Not Verified"
+  },
+  {
+    "name": "Dennis Njenga",
+    "email": "dennis.njenga.vendor@gmail.com",
+    "password": "Password123",
+    "phone": "0718251598",
+    "estate": "Lavington",
+    "status": "Verified"
+  },
+  {
+    "name": "Caroline Mutheu",
+    "email": "caroline.mutheu.vendor@gmail.com",
+    "password": "Password123",
+    "phone": "0718259517",
+    "estate": "Kawangware",
+    "status": "Pending"
+  },
+  {
+    "name": "Stephen Maina",
+    "email": "stephen.maina.vendor@gmail.com",
+    "password": "Password123",
+    "phone": "0718267436",
+    "estate": "Dagoretti",
+    "status": "Verified"
+  },
+  {
+    "name": "Emily Chebet",
+    "email": "emily.chebet.vendor@gmail.com",
+    "password": "Password123",
+    "phone": "0718275355",
+    "estate": "Rongai",
+    "status": "Not Verified"
+  },
+  {
+    "name": "Moses Omollo",
+    "email": "moses.omollo.vendor@gmail.com",
+    "password": "Password123",
+    "phone": "0718283274",
+    "estate": "Syokimau",
+    "status": "Verified"
+  },
+  {
+    "name": "Jane Wanja",
+    "email": "jane.wanja.vendor@gmail.com",
+    "password": "Password123",
+    "phone": "0718291193",
+    "estate": "Kitengela",
+    "status": "Pending"
+  },
+  {
+    "name": "Charles Njoroge",
+    "email": "charles.njoroge.vendor@gmail.com",
+    "password": "Password123",
+    "phone": "0718299112",
+    "estate": "Tena",
+    "status": "Verified"
+  },
+  {
+    "name": "Pamela Awino",
+    "email": "pamela.awino.vendor@gmail.com",
+    "password": "Password123",
+    "phone": "0718307031",
+    "estate": "Githurai",
+    "status": "Not Verified"
+  }
+]

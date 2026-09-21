@@ -2,7 +2,6 @@ import './styles/Admin_dash.css';
 import { useNavigate } from 'react-router-dom';
 import React,{useState, useEffect} from 'react';
 
-
 const AdminDashboard = () => {
   const navigate = useNavigate();
 

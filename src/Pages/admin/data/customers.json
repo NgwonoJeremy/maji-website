@@ -1,0 +1,352 @@
+[
+  {
+    "name": "Grace Muthoni",
+    "email": "grace.muthoni.customer@gmail.com",
+    "password": "Password123",
+    "phone": "0710007919",
+    "estate": "Kasarani"
+  },
+  {
+    "name": "James Ochieng",
+    "email": "james.ochieng.customer@gmail.com",
+    "password": "Password123",
+    "phone": "0710015838",
+    "estate": "Lang'ata"
+  },
+  {
+    "name": "Mary Wanjiru",
+    "email": "mary.wanjiru.customer@gmail.com",
+    "password": "Password123",
+    "phone": "0710023757",
+    "estate": "Ruiru"
+  },
+  {
+    "name": "Peter Kimani",
+    "email": "peter.kimani.customer@gmail.com",
+    "password": "Password123",
+    "phone": "0710031676",
+    "estate": "South C"
+  },
+  {
+    "name": "Sarah Akinyi",
+    "email": "sarah.akinyi.customer@gmail.com",
+    "password": "Password123",
+    "phone": "0710039595",
+    "estate": "Westlands"
+  },
+  {
+    "name": "David Odhiambo",
+    "email": "david.odhiambo.customer@gmail.com",
+    "password": "Password123",
+    "phone": "0710047514",
+    "estate": "Karen"
+  },
+  {
+    "name": "Lucy Wambui",
+    "email": "lucy.wambui.customer@gmail.com",
+    "password": "Password123",
+    "phone": "0710055433",
+    "estate": "Kilimani"
+  },
+  {
+    "name": "Michael Kiprop",
+    "email": "michael.kiprop.customer@gmail.com",
+    "password": "Password123",
+    "phone": "0710063352",
+    "estate": "Eastleigh"
+  },
+  {
+    "name": "Faith Chelangat",
+    "email": "faith.chelangat.customer@gmail.com",
+    "password": "Password123",
+    "phone": "0710071271",
+    "estate": "Ngong"
+  },
+  {
+    "name": "Samuel Mwangi",
+    "email": "samuel.mwangi.customer@gmail.com",
+    "password": "Password123",
+    "phone": "0710079190",
+    "estate": "Thika Road"
+  },
+  {
+    "name": "Jane Atieno",
+    "email": "jane.atieno.customer@gmail.com",
+    "password": "Password123",
+    "phone": "0710087109",
+    "estate": "Umoja"
+  },
+  {
+    "name": "Robert Omondi",
+    "email": "robert.omondi.customer@gmail.com",
+    "password": "Password123",
+    "phone": "0710095028",
+    "estate": "Buruburu"
+  },
+  {
+    "name": "Esther Njoroge",
+    "email": "esther.njoroge.customer@gmail.com",
+    "password": "Password123",
+    "phone": "0710102947",
+    "estate": "Kileleshwa"
+  },
+  {
+    "name": "John Kamau",
+    "email": "john.kamau.customer@gmail.com",
+    "password": "Password123",
+    "phone": "0710110866",
+    "estate": "Embakasi"
+  },
+  {
+    "name": "Catherine Wanjiku",
+    "email": "catherine.wanjiku.customer@gmail.com",
+    "password": "Password123",
+    "phone": "0710118785",
+    "estate": "Lavington"
+  },
+  {
+    "name": "Daniel Mutua",
+    "email": "daniel.mutua.customer@gmail.com",
+    "password": "Password123",
+    "phone": "0710126704",
+    "estate": "Kawangware"
+  },
+  {
+    "name": "Florence Adhiambo",
+    "email": "florence.adhiambo.customer@gmail.com",
+    "password": "Password123",
+    "phone": "0710134623",
+    "estate": "Dagoretti"
+  },
+  {
+    "name": "George Otieno",
+    "email": "george.otieno.customer@gmail.com",
+    "password": "Password123",
+    "phone": "0710142542",
+    "estate": "Rongai"
+  },
+  {
+    "name": "Alice Muthoni",
+    "email": "alice.muthoni.customer@gmail.com",
+    "password": "Password123",
+    "phone": "0710150461",
+    "estate": "Syokimau"
+  },
+  {
+    "name": "Thomas Kibet",
+    "email": "thomas.kibet.customer@gmail.com",
+    "password": "Password123",
+    "phone": "0710158380",
+    "estate": "Kitengela"
+  },
+  {
+    "name": "Susan Achieng",
+    "email": "susan.achieng.customer@gmail.com",
+    "password": "Password123",
+    "phone": "0710166299",
+    "estate": "Tena"
+  },
+  {
+    "name": "Brian Mwenda",
+    "email": "brian.mwenda.customer@gmail.com",
+    "password": "Password123",
+    "phone": "0710174218",
+    "estate": "Githurai"
+  },
+  {
+    "name": "Rose Kemunto",
+    "email": "rose.kemunto.customer@gmail.com",
+    "password": "Password123",
+    "phone": "0710182137",
+    "estate": "Kangemi"
+  },
+  {
+    "name": "Patrick Njuguna",
+    "email": "patrick.njuguna.customer@gmail.com",
+    "password": "Password123",
+    "phone": "0710190056",
+    "estate": "Muthaiga"
+  },
+  {
+    "name": "Dorothy Wairimu",
+    "email": "dorothy.wairimu.customer@gmail.com",
+    "password": "Password123",
+    "phone": "0710197975",
+    "estate": "Parklands"
+  },
+  {
+    "name": "Eliud Kipchoge",
+    "email": "eliud.kipchoge.customer@gmail.com",
+    "password": "Password123",
+    "phone": "0710205894",
+    "estate": "Eldoret (Nairobi Area)"
+  },
+  {
+    "name": "Mildred Adhiambo",
+    "email": "mildred.adhiambo.customer@gmail.com",
+    "password": "Password123",
+    "phone": "0710213813",
+    "estate": "Imara Daima"
+  },
+  {
+    "name": "Joseph Kuria",
+    "email": "joseph.kuria.customer@gmail.com",
+    "password": "Password123",
+    "phone": "0710221732",
+    "estate": "Ruiru"
+  },
+  {
+    "name": "Mercy Jepkosgei",
+    "email": "mercy.jepkosgei.customer@gmail.com",
+    "password": "Password123",
+    "phone": "0710229651",
+    "estate": "Kasarani"
+  },
+  {
+    "name": "Kennedy Oduor",
+    "email": "kennedy.oduor.customer@gmail.com",
+    "password": "Password123",
+    "phone": "0710237570",
+    "estate": "South B"
+  },
+  {
+    "name": "Ann Wanjiru",
+    "email": "ann.wanjiru.customer@gmail.com",
+    "password": "Password123",
+    "phone": "0710245489",
+    "estate": "Karen"
+  },
+  {
+    "name": "Simon Ndirangu",
+    "email": "simon.ndirangu.customer@gmail.com",
+    "password": "Password123",
+    "phone": "0710253408",
+    "estate": "Lang'ata"
+  },
+  {
+    "name": "Phyllis Okoth",
+    "email": "phyllis.okoth.customer@gmail.com",
+    "password": "Password123",
+    "phone": "0710261327",
+    "estate": "Westlands"
+  },
+  {
+    "name": "Timothy Mbuvi",
+    "email": "timothy.mbuvi.customer@gmail.com",
+    "password": "Password123",
+    "phone": "0710269246",
+    "estate": "Kilimani"
+  },
+  {
+    "name": "Ruth Nyambura",
+    "email": "ruth.nyambura.customer@gmail.com",
+    "password": "Password123",
+    "phone": "0710277165",
+    "estate": "Eastleigh"
+  },
+  {
+    "name": "Vincent Mwangi",
+    "email": "vincent.mwangi.customer@gmail.com",
+    "password": "Password123",
+    "phone": "0710285084",
+    "estate": "Ngong"
+  },
+  {
+    "name": "Joyce Akinyi",
+    "email": "joyce.akinyi.customer@gmail.com",
+    "password": "Password123",
+    "phone": "0710293003",
+    "estate": "Thika Road"
+  },
+  {
+    "name": "Fredrick Ochieng",
+    "email": "fredrick.ochieng.customer@gmail.com",
+    "password": "Password123",
+    "phone": "0710300922",
+    "estate": "Umoja"
+  },
+  {
+    "name": "Margaret Wambui",
+    "email": "margaret.wambui.customer@gmail.com",
+    "password": "Password123",
+    "phone": "0710308841",
+    "estate": "Buruburu"
+  },
+  {
+    "name": "Julius Kariuki",
+    "email": "julius.kariuki.customer@gmail.com",
+    "password": "Password123",
+    "phone": "0710316760",
+    "estate": "Kileleshwa"
+  },
+  {
+    "name": "Beatrice Atieno",
+    "email": "beatrice.atieno.customer@gmail.com",
+    "password": "Password123",
+    "phone": "0710324679",
+    "estate": "Embakasi"
+  },
+  {
+    "name": "Dennis Njenga",
+    "email": "dennis.njenga.customer@gmail.com",
+    "password": "Password123",
+    "phone": "0710332598",
+    "estate": "Lavington"
+  },
+  {
+    "name": "Caroline Mutheu",
+    "email": "caroline.mutheu.customer@gmail.com",
+    "password": "Password123",
+    "phone": "0710340517",
+    "estate": "Kawangware"
+  },
+  {
+    "name": "Stephen Maina",
+    "email": "stephen.maina.customer@gmail.com",
+    "password": "Password123",
+    "phone": "0710348436",
+    "estate": "Dagoretti"
+  },
+  {
+    "name": "Emily Chebet",
+    "email": "emily.chebet.customer@gmail.com",
+    "password": "Password123",
+    "phone": "0710356355",
+    "estate": "Rongai"
+  },
+  {
+    "name": "Moses Omollo",
+    "email": "moses.omollo.customer@gmail.com",
+    "password": "Password123",
+    "phone": "0710364274",
+    "estate": "Syokimau"
+  },
+  {
+    "name": "Jane Wanja",
+    "email": "jane.wanja.customer@gmail.com",
+    "password": "Password123",
+    "phone": "0710372193",
+    "estate": "Kitengela"
+  },
+  {
+    "name": "Charles Njoroge",
+    "email": "charles.njoroge.customer@gmail.com",
+    "password": "Password123",
+    "phone": "0710380112",
+    "estate": "Tena"
+  },
+  {
+    "name": "Pamela Awino",
+    "email": "pamela.awino.customer@gmail.com",
+    "password": "Password123",
+    "phone": "0710388031",
+    "estate": "Githurai"
+  },
+  {
+    "name": "George Kamotho",
+    "email": "george.kamotho.customer@gmail.com",
+    "password": "Password123",
+    "phone": "0710395950",
+    "estate": "Kangemi"
+  }
+]
