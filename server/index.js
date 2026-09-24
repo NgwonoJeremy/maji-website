@@ -4,6 +4,8 @@ const cors =require("cors");
 const authRoutes=require("./routes/auth");
 const ordersRoutes=require("./routes/orders");
 const vendorRoutes=require("./routes/vendors");
+//added for the test Lab6
+const practiceRoutes = require("./practice");
 const app =express();
 
 app.use(cors({
@@ -21,3 +23,5 @@ const PORT = process.env.PORT||3001;
 app.listen(PORT,() =>{
     console.log(`Server running on http://localhost:${PORT}`);
 });
+//added for the test Lab6
+app.use("/api", practiceRoutes);

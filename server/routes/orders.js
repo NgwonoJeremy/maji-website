@@ -151,4 +151,56 @@ router.patch("/:id/status", async (req, res) => {
 });
 
 
+//api to get estates with active orders.
+router.get("/active/estates", async (req, res) => {
+    try {
+        const [rows] = await db.query(`
+            SELECT DISTINCT estate
+            FROM orders
+            WHERE status IN ('pending', 'accepted', 'on the way')
+              AND estate IS NOT NULL
+        `);
+
+        const result = rows.map(row => ({
+            estate: row.estate
+        }));
+
+        res.status(200).json(result);
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            error: "Failed to fetch active estates"
+        });
+    }
+});
+
+//api to get estates with their delivery hours
+router.get("/active/schedules", async (req, res) => {
+    try {
+        const [rows] = await db.query(`
+            SELECT DISTINCT
+                estate,
+                delivery_time AS deliveryTime
+            FROM orders
+            WHERE status IN ('pending', 'accepted', 'on the way')
+              AND estate IS NOT NULL
+              AND delivery_time IS NOT NULL
+        `);
+
+        const result = rows.map(row => ({
+            estate: row.estate,
+            deliveryTime: row.deliveryTime
+        }));
+
+        res.status(200).json(result);
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            error: "Failed to fetch active delivery schedules"
+        });
+    }
+});
+
 module.exports = router;

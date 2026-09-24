@@ -1,151 +1,141 @@
 openapi: 3.0.0
-info:
-  title: SkillBridge–Maji Integration API
-  version: 1.0.0
-  description: >
-    API exposed by Maji for SkillBridge to read estate, vendor, and
-    payment-method data, and to manage driver-interest and customer records.
-paths:
-  /estates:
-    get:
-      summary: Return estates with active delivery schedules
-      parameters:
-        - name: deliveryStatus
-          in: query
-          required: false
-          schema:
-            type: string
-            enum: [active, inactive]
-          example: active
-      responses:
-        '200':
-          description: A list of estates
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: object
-                  required: [id, name, deliveryStatus]
-                  properties:
-                    id:
-                      type: string
-                      example: "est_1029"
-                    name:
-                      type: string
-                      example: "Kahawa Sukari"
-                    deliveryStatus:
-                      type: string
-                      enum: [active, inactive]
-                      example: active
 
-  /vendors/stations:
+info:
+  title: Maji Platform - SkillsBridge API
+  version: 1.0.0
+  description: API exposed by Maji for SkillBridge to read estate, vendor and active deliverie schedules.
+
+tags:
+  - name: SkillsBridge
+    description: Read-only endpoints consumed by SkillsBridge.
+
+paths:
+
+  /orders/active/estates:
     get:
-      summary: Return each vendor's station name and primary target estate
+      tags:
+        - SkillsBridge
+      summary: Get estates with active orders
       responses:
         '200':
-          description: A list of vendor stations
+          description: Estates where active orders are taking place
           content:
             application/json:
               schema:
                 type: array
                 items:
                   type: object
-                  required: [vendorId, stationName, targetEstateId]
+                  required:
+                    - estate
+                  properties:
+                    estate:
+                      type: string
+                      example: Kasarani
+
+  /orders/active/schedules:
+    get:
+      tags:
+        - SkillsBridge
+      summary: Get delivery schedules for active orders
+      responses:
+        '200':
+          description: Active delivery schedules by estate
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  required:
+                    - estate
+                    - deliveryTime
+                  properties:
+                    estate:
+                      type: string
+                      example: Kasarani
+                    deliveryTime:
+                      type: string
+                      example: "14:00"
+
+  /vendors/top-rated:
+    get:
+      tags:
+        - SkillsBridge
+      summary: Get top-rated vendors
+      responses:
+        '200':
+          description: Top-rated vendors and their business information
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  required:
+                    - vendorId
+                    - businessName
+                    - estate
+                    - rating
+                    - isVerified
+                    - isOnline
                   properties:
                     vendorId:
+                      type: integer
+                      example: 7
+                    businessName:
                       type: string
-                      example: "ven_204"
-                    stationName:
+                      example: Maji Fresh
+                    estate:
                       type: string
-                      example: "Githunguri Water Point"
-                    targetEstateId:
+                      example: Kasarani
+                    rating:
+                      type: number
+                      format: float
+                      minimum: 3
+                      maximum: 5
+                      example: 4.8
+                    isVerified:
+                      type: boolean
+                      example: true
+                    isOnline:
+                      type: boolean
+                      example: true
+                    ownerName:
                       type: string
-                      example: "est_1029"
+                      example: John Doe
+                    phone:
+                      type: string
+                      example: "0712345678"
 
-  /customers/payment-method:
+  /vendors/locations:
     get:
-      summary: Return customers' primary payment methods to determine Skill Coin purchase prompt eligibility
+      tags:
+        - SkillsBridge
+      summary: Get vendor locations
+      description: >
+        SkillsBridge needs to read each water vendor's station name and
+        primary target estate in order to suggest those vendor locations
+        as physical meetup venues for skill sessions.
       responses:
         '200':
-          description: A list of customers and their payment methods
+          description: Water vendor station names and primary target estates
           content:
             application/json:
               schema:
                 type: array
                 items:
                   type: object
-                  required: [customerId, paymentMethod]
+                  required:
+                    - vendorId
+                    - businessName
+                    - estate
                   properties:
-                    customerId:
+                    vendorId:
+                      type: integer
+                      example: 7
+                    businessName:
                       type: string
-                      example: "cus_774"
-                    paymentMethod:
+                      example: Maji Fresh
+                    estate:
                       type: string
-                      enum: [mpesa, cash, other]
-                      example: mpesa
-
-  /customers/{id}:
-    delete:
-      summary: Delete a customer record
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-          example: "cus_774"
-      responses:
-        '204':
-          description: Customer deleted
-
-  /estates/{estateId}/driver-interests:
-    post:
-      summary: Register a user's interest in delivery work at an estate
-      parameters:
-        - name: estateId
-          in: path
-          required: true
-          schema:
-            type: string
-          example: "est_1029"
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [userId]
-              properties:
-                userId:
-                  type: string
-                  example: "usr_5581"
-                contactMethod:
-                  type: string
-                  example: "+254712345678"
-      responses:
-        '201':
-          description: Driver interest record created
-          content:
-            application/json:
-              schema:
-                type: object
-                required: [id, userId, estateId, status, createdAt]
-                properties:
-                  id:
-                    type: string
-                    example: "di_9911"
-                  userId:
-                    type: string
-                    example: "usr_5581"
-                  estateId:
-                    type: string
-                    example: "est_1029"
-                  status:
-                    type: string
-                    enum: [pending, contacted, confirmed]
-                    example: pending
-                  createdAt:
-                    type: string
-                    format: date-time
-                    example: "2026-09-07T10:00:00Z"
+                      example: Kasarani
