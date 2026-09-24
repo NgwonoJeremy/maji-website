@@ -11,6 +11,7 @@ router.get("/" ,async(req,res)=> {
               vendors.id,
               vendors.estate,
               vendors.is_verified,
+              vendorS.business_name,  
               vendors.is_online,
               vendors.rating,
               vendors.created_at
@@ -29,11 +30,6 @@ router.patch("/:id/verify" ,async(req,res) =>{
     const vendorId=req.params.id;
     const {verify}=req.body;
 
-    const verification =[
-        "Pending",
-        "Verified",
-        "Rejected"
-    ];
     try {
         const[existing]= await db.query(
             "SELECT *FROM vendors WHERE id=?",
@@ -43,7 +39,7 @@ router.patch("/:id/verify" ,async(req,res) =>{
          return res.status(404).json({message:"Vendor not found"});
         } await db.query (
             "UPDATE vendors SET is_verified=? WHERE id=? ",
-            [is_verified,vendorId]
+            [verify,vendorId]
         )
     } catch (err) {
         console.error("Update vendor statuses error : ",err);
