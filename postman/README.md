@@ -49,3 +49,12 @@ Run the collection from Postman. The GET requests only read data. The POST creat
 | DELETE Vendor | `DELETE /api/vendors/{{vendorId}}` | HTTP 204; response body is empty |
 
 Each request includes Postman test scripts for its expected status and response shape. These checks require the API and database to be running; syntax validation alone does not verify database behavior.
+
+## Week 7 lab tests
+
+The Postman collection is useful for manual/collection-runner checks, but the
+Week 7 lab also requires automated tests in the repository. Run those from the
+project root with `npm test`. The Jest/Supertest suite is in `__tests__/` and
+calls the Express app directly; its SQL layer is mocked, so it does not count
+as partner testing against a live database. Partner exchange progress and
+results belong in [`../PARTNER_TEST_RESULTS.md`](../PARTNER_TEST_RESULTS.md).

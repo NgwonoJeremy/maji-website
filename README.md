@@ -57,6 +57,26 @@ npm run dev
 ```
 Then open the local URL shown in your terminal (usually `http://localhost:5173`) in your browser.
 ____
+
+## Week 7 API tests
+
+Install the project dependencies, then run the API route tests with:
+
+```bash
+npm test
+```
+
+The suite uses Jest and Supertest against the Express app in `server/app.js`.
+It checks all eight endpoints listed in the Postman collection, including
+response shapes, write validation, not-found IDs for update/delete routes, and
+empty-list cases. MySQL queries are mocked, so these tests do not replace
+running the API against a configured database or executing a partner's tests
+against the real server.
+
+See [`postman/README.md`](postman/README.md) for collection setup and
+[`PARTNER_TEST_RESULTS.md`](PARTNER_TEST_RESULTS.md) for the current partner
+test exchange status.
+
 ### Project structure
 
 ```

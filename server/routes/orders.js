@@ -57,7 +57,14 @@ router.post("/", async (req, res) => {
     paymentMethod
   } = req.body;
 
-  if (!customerId || !estate || !volume || !deliveryTime || !paymentMethod) {
+  if (
+    !customerId ||
+    !estate ||
+    volume === undefined ||
+    volume === null ||
+    !deliveryTime ||
+    !paymentMethod
+  ) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
