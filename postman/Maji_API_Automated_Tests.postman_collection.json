@@ -1,0 +1,296 @@
+{
+  "info": {
+    "name": "Maji API Automated Tests",
+    "description": "Automated smoke tests for the Maji API. Set customerId to an existing customer ID and vendorId to a disposable vendor ID before running. The PUT requests modify those records, and DELETE Vendor permanently removes the selected vendor.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "GET Active Estates",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/orders/active/estates"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('returns HTTP 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test('returns an array of estate names', function () {",
+              "    const body = pm.response.json();",
+              "    pm.expect(body).to.be.an('array');",
+              "    body.forEach(function (entry) {",
+              "        pm.expect(entry.estate).to.be.a('string').and.not.empty;",
+              "    });",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "GET Active Schedules",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/orders/active/schedules"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('returns HTTP 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test('returns schedules with estate and delivery time', function () {",
+              "    const body = pm.response.json();",
+              "    pm.expect(body).to.be.an('array');",
+              "    body.forEach(function (entry) {",
+              "        pm.expect(entry.estate).to.be.a('string').and.not.empty;",
+              "        pm.expect(entry.deliveryTime).to.exist;",
+              "    });",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "GET Top Rated Vendors",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/vendors/top-rated"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('returns HTTP 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test('returns verified vendors with valid ratings', function () {",
+              "    const body = pm.response.json();",
+              "    pm.expect(body).to.be.an('array');",
+              "    body.forEach(function (vendor) {",
+              "        pm.expect(vendor.vendorId).to.exist;",
+              "        pm.expect(vendor.businessName).to.be.a('string').and.not.empty;",
+              "        pm.expect(vendor.estate).to.be.a('string').and.not.empty;",
+              "        pm.expect(vendor.rating).to.be.within(3, 5);",
+              "        pm.expect(vendor.isVerified).to.eql(true);",
+              "        pm.expect(vendor.isOnline).to.be.a('boolean');",
+              "    });",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "GET Vendor Locations",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/vendors/locations"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('returns HTTP 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test('returns vendor locations', function () {",
+              "    const body = pm.response.json();",
+              "    pm.expect(body).to.be.an('array');",
+              "    body.forEach(function (vendor) {",
+              "        pm.expect(vendor.vendorId).to.exist;",
+              "        pm.expect(vendor.businessName).to.be.a('string').and.not.empty;",
+              "        pm.expect(vendor.estate).to.be.a('string').and.not.empty;",
+              "    });",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "POST Create Order",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"customerId\": {{customerId}},\n  \"vendorId\": null,\n  \"estate\": \"Kasarani\",\n  \"volume\": 100,\n  \"deliveryTime\": \"Afternoon (12pm - 6pm)\",\n  \"totalAmount\": 50,\n  \"paymentMethod\": \"cash\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/orders"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('creates the order with HTTP 201', function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "pm.test('returns the created pending order', function () {",
+              "    const body = pm.response.json();",
+              "    pm.expect(body.order).to.be.an('object');",
+              "    pm.expect(body.order.id).to.exist;",
+              "    pm.expect(String(body.order.customer_id)).to.eql(String(pm.collectionVariables.get('customerId')));",
+              "    pm.expect(body.order.status).to.eql('pending');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "PUT Update Customer",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Postman Test Customer\",\n  \"email\": \"postman-test-{{customerId}}@example.com\",\n  \"phone\": \"0700000000\",\n  \"estate\": \"Kasarani\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/customers/{{customerId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('updates the customer with HTTP 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test('returns the updated customer fields', function () {",
+              "    const body = pm.response.json();",
+              "    pm.expect(String(body.id)).to.eql(String(pm.collectionVariables.get('customerId')));",
+              "    pm.expect(body.name).to.eql('Postman Test Customer');",
+              "    pm.expect(body.email).to.eql('postman-test-' + pm.collectionVariables.get('customerId') + '@example.com');",
+              "    pm.expect(body.phone).to.eql('0700000000');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "PUT Update Vendor",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"businessName\": \"Postman Test Vendor\",\n  \"dailyCapacity\": 1000,\n  \"estatesServed\": \"Kasarani, Roysambu\",\n  \"estate\": \"Kasarani\",\n  \"isOnline\": false\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/vendors/{{vendorId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('updates the vendor with HTTP 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test('returns the updated vendor fields', function () {",
+              "    const body = pm.response.json();",
+              "    pm.expect(String(body.vendorId)).to.eql(String(pm.collectionVariables.get('vendorId')));",
+              "    pm.expect(body.businessName).to.eql('Postman Test Vendor');",
+              "    pm.expect(body.estate).to.eql('Kasarani');",
+              "    pm.expect(Boolean(body.isOnline)).to.eql(false);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "DELETE Vendor",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": "{{baseUrl}}/vendors/{{vendorId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('deletes the vendor with HTTP 204', function () {",
+              "    pm.response.to.have.status(204);",
+              "});",
+              "pm.test('returns an empty response body', function () {",
+              "    pm.expect(pm.response.text()).to.eql('');",
+              "});"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3001/api",
+      "type": "string"
+    },
+    {
+      "key": "customerId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "vendorId",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}
