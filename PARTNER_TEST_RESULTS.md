@@ -8,12 +8,22 @@ not been run against this API, and there are no partner findings to report.
 
 ## Local automated tests
 
-`npm test` currently passes all 29 Jest/Supertest tests across the eight
-requested endpoints. They check successful response shapes, missing and
-wrong-typed write inputs, not-found resources, empty list results, and optional
-customer-estate behavior. These tests exercise the Express routes and response
-contracts, but mock the MySQL query layer. They are not evidence of partner
-testing or of behavior against a live database.
+**Execution result:** `npm test` passed on 2026-09-29: 3 test suites passed,
+29 tests passed, 0 failed. The command runs Jest in-band and exercises the
+Express app through Supertest.
+
+| Test file | Coverage |
+| --- | --- |
+| `__tests__/customers.test.js` | Customer update success and response shape; missing and wrong-typed fields; omitted optional estate; unknown and non-numeric customer IDs. |
+| `__tests__/orders.test.js` | Active-estate and schedule responses, including empty results; order creation success; missing fields, zero or wrongly typed values, unknown customer, and unknown supplied vendor. |
+| `__tests__/vendors.test.js` | Top-rated vendors and vendor locations, including empty results and response types; vendor update success and validation; unknown and non-numeric IDs; vendor deletion success and not-found behavior. |
+
+The suite checks response status codes and bodies, and verifies invalid inputs
+are rejected before any database query is made. Its MySQL query layer is
+mocked, so these results cover route behavior and response contracts, not live
+database integration. The Postman collection also contains request test
+scripts, but no collection-run result is recorded here. These results are not
+evidence of partner testing.
 
 ## Findings and classification
 
