@@ -82,6 +82,7 @@ describe("order and active delivery endpoints", () => {
         status: "pending"
       };
       db.query
+        .mockResolvedValueOnce([[{ id: 12 }], []])
         .mockResolvedValueOnce([{ insertId: 41 }, []])
         .mockResolvedValueOnce([[createdOrder], []]);
 
@@ -113,6 +114,52 @@ describe("order and active delivery endpoints", () => {
       expect(response.status).toBe(400);
       expect(response.body.message).toBe("Volume must be greater than 0");
       expect(db.query).not.toHaveBeenCalled();
+    });
+
+    it("rejects a volume with the wrong type", async () => {
+      const response = await request(app)
+        .post("/api/orders")
+        .send({ ...orderInput, volume: "100" });
+
+      expect(response.status).toBe(400);
+      expect(response.body.message).toBe("Invalid field types");
+      expect(db.query).not.toHaveBeenCalled();
+    });
+
+    it("rejects a payment method with the wrong type", async () => {
+      const response = await request(app)
+        .post("/api/orders")
+        .send({ ...orderInput, paymentMethod: 42 });
+
+      expect(response.status).toBe(400);
+      expect(response.body.message).toBe("Invalid field types");
+      expect(db.query).not.toHaveBeenCalled();
+    });
+
+    it("returns 404 when the customer does not exist", async () => {
+      db.query.mockResolvedValueOnce([[], []]);
+
+      const response = await request(app)
+        .post("/api/orders")
+        .send(orderInput);
+
+      expect(response.status).toBe(404);
+      expect(response.body.message).toBe("Customer not found");
+      expect(db.query).toHaveBeenCalledTimes(1);
+    });
+
+    it("returns 404 when the supplied vendor does not exist", async () => {
+      db.query
+        .mockResolvedValueOnce([[{ id: 12 }], []])
+        .mockResolvedValueOnce([[], []]);
+
+      const response = await request(app)
+        .post("/api/orders")
+        .send({ ...orderInput, vendorId: 99 });
+
+      expect(response.status).toBe(404);
+      expect(response.body.message).toBe("Vendor not found");
+      expect(db.query).toHaveBeenCalledTimes(2);
     });
   });
 });

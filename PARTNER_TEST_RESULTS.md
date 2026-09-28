@@ -8,8 +8,10 @@ not been run against this API, and there are no partner findings to report.
 
 ## Local automated tests
 
-`npm test` currently passes all 19 Jest/Supertest tests across the eight
-requested endpoints. These tests exercise the Express routes and response
+`npm test` currently passes all 29 Jest/Supertest tests across the eight
+requested endpoints. They check successful response shapes, missing and
+wrong-typed write inputs, not-found resources, empty list results, and optional
+customer-estate behavior. These tests exercise the Express routes and response
 contracts, but mock the MySQL query layer. They are not evidence of partner
 testing or of behavior against a live database.
 

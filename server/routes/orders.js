@@ -68,6 +68,23 @@ router.post("/", async (req, res) => {
     return res.status(400).json({ message: "All fields are required" });
   }
 
+  if (
+    !Number.isSafeInteger(customerId) ||
+    customerId < 1 ||
+    typeof estate !== "string" ||
+    !estate.trim() ||
+    typeof volume !== "number" ||
+    !Number.isFinite(volume) ||
+    typeof deliveryTime !== "string" ||
+    typeof paymentMethod !== "string" ||
+    (vendorId !== undefined && vendorId !== null &&
+      (!Number.isSafeInteger(vendorId) || vendorId < 1)) ||
+    (totalAmount !== undefined && totalAmount !== null &&
+      (typeof totalAmount !== "number" || !Number.isFinite(totalAmount)))
+  ) {
+    return res.status(400).json({ message: "Invalid field types" });
+  }
+
   if (volume <= 0) {
     return res.status(400).json({ message: "Volume must be greater than 0" });
   }
@@ -78,6 +95,26 @@ router.post("/", async (req, res) => {
   }
 
   try {
+    const [customers] = await db.query(
+      "SELECT id FROM customers WHERE id = ?",
+      [customerId]
+    );
+
+    if (customers.length === 0) {
+      return res.status(404).json({ message: "Customer not found" });
+    }
+
+    if (vendorId !== undefined && vendorId !== null) {
+      const [vendors] = await db.query(
+        "SELECT id FROM vendors WHERE id = ?",
+        [vendorId]
+      );
+
+      if (vendors.length === 0) {
+        return res.status(404).json({ message: "Vendor not found" });
+      }
+    }
+
     const [result] = await db.query(
       `INSERT INTO orders
         (customer_id, vendor_id, estate, volume,

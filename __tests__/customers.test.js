@@ -52,6 +52,37 @@ describe("customer endpoints", () => {
       expect(db.query).not.toHaveBeenCalled();
     });
 
+    it("rejects customer fields with the wrong type", async () => {
+      const response = await request(app)
+        .put("/api/customers/12")
+        .send({ ...customerInput, phone: 700000000 });
+
+      expect(response.status).toBe(400);
+      expect(response.body.message).toBe("Customer fields must have valid types");
+      expect(db.query).not.toHaveBeenCalled();
+    });
+
+    it("accepts an omitted optional estate and returns it as null", async () => {
+      const inputWithoutEstate = {
+        name: "Test Customer",
+        email: "customer.test@example.com",
+        phone: "0700000000"
+      };
+      db.query
+        .mockResolvedValueOnce([[{ id: 12 }], []])
+        .mockResolvedValueOnce([{ affectedRows: 1 }, []])
+        .mockResolvedValueOnce([[
+          { id: 12, ...inputWithoutEstate, role: "customer", estate: null }
+        ], []]);
+
+      const response = await request(app)
+        .put("/api/customers/12")
+        .send(inputWithoutEstate);
+
+      expect(response.status).toBe(200);
+      expect(response.body.estate).toBeNull();
+    });
+
     it("returns 404 when the customer does not exist", async () => {
       db.query.mockResolvedValueOnce([[], []]);
 
@@ -62,6 +93,16 @@ describe("customer endpoints", () => {
       expect(response.status).toBe(404);
       expect(response.body.message).toBe("Customer not found");
       expect(db.query).toHaveBeenCalledTimes(1);
+    });
+
+    it("rejects a non-numeric customer ID", async () => {
+      const response = await request(app)
+        .put("/api/customers/not-an-id")
+        .send(customerInput);
+
+      expect(response.status).toBe(400);
+      expect(response.body.message).toBe("Customer ID must be a positive integer");
+      expect(db.query).not.toHaveBeenCalled();
     });
   });
 });

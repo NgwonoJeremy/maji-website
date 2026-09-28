@@ -125,6 +125,16 @@ describe("vendor endpoints", () => {
       expect(db.query).not.toHaveBeenCalled();
     });
 
+    it("rejects vendor fields with the wrong type", async () => {
+      const response = await request(app)
+        .put("/api/vendors/7")
+        .send({ ...vendorInput, isOnline: "false" });
+
+      expect(response.status).toBe(400);
+      expect(response.body.message).toBe("Vendor fields must have valid types");
+      expect(db.query).not.toHaveBeenCalled();
+    });
+
     it("returns 404 when the vendor does not exist", async () => {
       db.query.mockResolvedValueOnce([[], []]);
 
@@ -135,6 +145,16 @@ describe("vendor endpoints", () => {
       expect(response.status).toBe(404);
       expect(response.body.message).toBe("Vendor not found");
       expect(db.query).toHaveBeenCalledTimes(1);
+    });
+
+    it("rejects a non-numeric vendor ID", async () => {
+      const response = await request(app)
+        .put("/api/vendors/not-an-id")
+        .send(vendorInput);
+
+      expect(response.status).toBe(400);
+      expect(response.body.message).toBe("Vendor ID must be a positive integer");
+      expect(db.query).not.toHaveBeenCalled();
     });
   });
 
@@ -159,6 +179,14 @@ describe("vendor endpoints", () => {
       expect(response.status).toBe(404);
       expect(response.body.message).toBe("Vendor not found");
       expect(db.query).toHaveBeenCalledTimes(1);
+    });
+
+    it("rejects a non-numeric vendor ID", async () => {
+      const response = await request(app).delete("/api/vendors/not-an-id");
+
+      expect(response.status).toBe(400);
+      expect(response.body.message).toBe("Vendor ID must be a positive integer");
+      expect(db.query).not.toHaveBeenCalled();
     });
   });
 });

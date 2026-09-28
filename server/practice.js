@@ -2,6 +2,7 @@ const express = require("express");
 const db = require("./db");
 
 const router = express.Router();
+const isValidId = id => /^[1-9]\d*$/.test(id);
 
 //CREATE A NEW ORDER
 
@@ -88,6 +89,23 @@ router.put("/customers/:id", async (req, res) => {
 
         }
 
+        if (
+            typeof name !== "string" ||
+            typeof email !== "string" ||
+            typeof phone !== "string" ||
+            (estate !== undefined && estate !== null && typeof estate !== "string")
+        ) {
+            return res.status(400).json({
+                message: "Customer fields must have valid types"
+            });
+        }
+
+        if (!isValidId(id)) {
+            return res.status(400).json({
+                message: "Customer ID must be a positive integer"
+            });
+        }
+
         const [existing] = await db.query(
             "SELECT id FROM customers WHERE id = ?",
             [id]
@@ -155,6 +173,26 @@ router.put("/vendors/:id", async (req, res) => {
 
         }
 
+        if (
+            typeof businessName !== "string" ||
+            typeof estate !== "string" ||
+            (dailyCapacity !== undefined && dailyCapacity !== null &&
+                (!Number.isInteger(dailyCapacity) || dailyCapacity < 0)) ||
+            (estatesServed !== undefined && estatesServed !== null &&
+                typeof estatesServed !== "string") ||
+            (isOnline !== undefined && isOnline !== null && typeof isOnline !== "boolean")
+        ) {
+            return res.status(400).json({
+                message: "Vendor fields must have valid types"
+            });
+        }
+
+        if (!isValidId(id)) {
+            return res.status(400).json({
+                message: "Vendor ID must be a positive integer"
+            });
+        }
+
         const [existing] = await db.query(
             "SELECT id FROM vendors WHERE id = ?",
             [id]
@@ -178,7 +216,7 @@ router.put("/vendors/:id", async (req, res) => {
              WHERE id = ?`,
             [
                 businessName,
-                dailyCapacity || null,
+                dailyCapacity ?? null,
                 estatesServed || null,
                 estate,
                 isOnline ?? false,
@@ -220,6 +258,12 @@ router.delete("/vendors/:id", async (req, res) => {
     try {
 
         const { id } = req.params;
+
+        if (!isValidId(id)) {
+            return res.status(400).json({
+                message: "Vendor ID must be a positive integer"
+            });
+        }
 
         const [existing] = await db.query(
             "SELECT id FROM vendors WHERE id = ?",
