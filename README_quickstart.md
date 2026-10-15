@@ -127,7 +127,7 @@ If something goes wrong on the server, these endpoints return status `500` with 
 Requires Node.js and a MySQL database.
 
 ```bash
-git clone <YOUR_REPO_URL>
+git clone <https://github.com/NgwonoJeremy/maji-website.git>
 cd <YOUR_REPO_FOLDER>
 npm install
 <create your .env file: list the variable names your db.js reads>
