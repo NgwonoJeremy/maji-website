@@ -1,11 +1,11 @@
 # Blind Test Report
 
-## 1. When my README was tested
-- Tester team: <name>
-- Outside my ring? <yes / no. If no, say who you paired with and why>
-- Result: <succeeded / did not succeed>
-- Time taken: <minutes>
-- Where they got stuck: <exact step or line, and why>
+## 1. When our README was tested
+- Tester team: <AgroConnect>
+- Outside my ring? <yes>
+- Result: <Succeeded!>
+- Time taken: <5 minutes>
+- Where they got stuck: <We did not get stuck. There was only some delay during the first request but that was expected and well documented.>
 
 ## 2. When I tested their README
 - Their API: <name>
