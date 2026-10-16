@@ -11,7 +11,7 @@ router.get("/" ,async(req,res)=> {
               vendors.id,
               vendors.estate,
               vendors.is_verified,
-              vendorS.business_name,  
+              vendors.business_name,  
               vendors.is_online,
               vendors.rating,
               vendors.created_at
@@ -40,7 +40,8 @@ router.patch("/:id/verify" ,async(req,res) =>{
         } await db.query (
             "UPDATE vendors SET is_verified=? WHERE id=? ",
             [verify,vendorId]
-        )
+        );
+        res.json({message : "Vendor status updated"});
     } catch (err) {
         console.error("Update vendor statuses error : ",err);
         res.status(500).json({message : "Order failed to update"})

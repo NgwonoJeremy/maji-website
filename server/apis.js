@@ -4,7 +4,7 @@ const db = require("./db");
 const router = express.Router();
 //SkillBridge api
 //api to get estates with active orders.
-router.get("/active/estates", async (req, res) => {
+router.get("/orders/active/estates", async (req, res) => {
     try {
         const [rows] = await db.query(`
             SELECT DISTINCT estate
@@ -28,7 +28,7 @@ router.get("/active/estates", async (req, res) => {
 });
 
 //api to get estates with their delivery hours
-router.get("/active/schedules", async (req, res) => {
+router.get("/orders/active/schedules", async (req, res) => {
     try {
         const [rows] = await db.query(`
             SELECT DISTINCT
@@ -56,7 +56,7 @@ router.get("/active/schedules", async (req, res) => {
 });
 
 //api to get the top rated vendor per estate
-router.get("/top-rated", async (req, res) => {
+router.get("/vendors/top-rated", async (req, res) => {
     try {
         const [rows] = await db.query(`
             SELECT
@@ -103,7 +103,7 @@ router.get("/top-rated", async (req, res) => {
 });
 
 //api to get station/business name and primary estate
-router.get("/locations", async (req, res) => {
+router.get("/vendors/locations", async (req, res) => {
     try {
         const [rows] = await db.query(`
             SELECT
@@ -132,71 +132,71 @@ router.get("/locations", async (req, res) => {
 //Maji APIS
 //CREATE A NEW ORDER
 
-router.post("/orders", async (req, res) => {
+// router.post("/orders", async (req, res) => {
 
-    try {
+//     try {
 
-        const {
-            customerId,
-            vendorId,
-            estate,
-            volume,
-            deliveryTime,
-            paymentMethod
-        } = req.body;
+//         const {
+//             customerId,
+//             vendorId,
+//             estate,
+//             volume,
+//             deliveryTime,
+//             paymentMethod
+//         } = req.body;
 
-        if (!customerId || !estate || !volume || !deliveryTime) {
+//         if (!customerId || !estate || !volume || !deliveryTime) {
 
-            return res.status(400).json({
-                message: "Missing required fields"
-            });
+//             return res.status(400).json({
+//                 message: "Missing required fields"
+//             });
 
-        }
+//         }
 
-        const [result] = await db.query(
-            `INSERT INTO orders
-            (customer_id, vendor_id, estate, volume, delivery_time,
-             payment_method, status)
-            VALUES (?, ?, ?, ?, ?, ?, ?)`,
-            [
-                customerId,
-                vendorId || null,
-                estate,
-                volume,
-                deliveryTime,
-                paymentMethod || null,
-                "pending"
-            ]
-        );
+//         const [result] = await db.query(
+//             `INSERT INTO orders
+//             (customer_id, vendor_id, estate, volume, delivery_time,
+//              payment_method, status)
+//             VALUES (?, ?, ?, ?, ?, ?, ?)`,
+//             [
+//                 customerId,
+//                 vendorId || null,
+//                 estate,
+//                 volume,
+//                 deliveryTime,
+//                 paymentMethod || null,
+//                 "pending"
+//             ]
+//         );
 
-        const [rows] = await db.query(
-            `SELECT
-                id AS orderId,
-                customer_id AS customerId,
-                vendor_id AS vendorId,
-                estate,
-                volume,
-                delivery_time AS deliveryTime,
-                payment_method AS paymentMethod,
-                status
-             FROM orders
-             WHERE id = ?`,
-            [result.insertId]
-        );
+//         const [rows] = await db.query(
+//             `SELECT
+//                 id AS orderId,
+//                 customer_id AS customerId,
+//                 vendor_id AS vendorId,
+//                 estate,
+//                 volume,
+//                 delivery_time AS deliveryTime,
+//                 payment_method AS paymentMethod,
+//                 status
+//              FROM orders
+//              WHERE id = ?`,
+//             [result.insertId]
+//         );
 
-        res.status(201).json(rows[0]);
+//         res.status(201).json(rows[0]);
 
-    } catch (error) {
+//     } catch (error) {
 
-        console.error("Create order error:", error);
+//         console.error("Create order error:", error);
 
-        res.status(500).json({
-            message: "Failed to create order"
-        });
+//         res.status(500).json({
+//             message: "Failed to create order"
+//         });
 
-    }
+//     }
 
-});
+// });
 
 //Updates customer information in the Maji platform.
 

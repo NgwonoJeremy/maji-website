@@ -3,7 +3,7 @@ const cors = require("cors");
 const authRoutes = require("./routes/auth");
 const ordersRoutes = require("./routes/orders");
 const vendorRoutes = require("./routes/vendors");
-const practiceRoutes = require("./practice");
+const apiRoutes=require("./apis");
 
 const app = express();
 
@@ -18,6 +18,6 @@ app.get("/", (req, res) => {
 
 app.use("/api/orders", ordersRoutes);
 app.use("/api/vendors", vendorRoutes);
-app.use("/api", practiceRoutes);
+app.use("/api", apiRoutes);
 
 module.exports = app;
