@@ -1,4 +1,4 @@
-CONTRACT_DEVIATIONS.md
+# CONTRACT_DEVIATIONS.md
 
 Contract Changes
 
@@ -43,3 +43,18 @@ Maji explicitly exposes active delivery schedules so that SkillsBridge can read 
 7. Top-Rated Vendor Endpoint: GET /vendors/top-rated
 
 Maji exposes vendor information required by the revised SkillsBridge integration, including vendor rating and availability information.
+## Week 8 changes to openapi.yaml
+
+8. Servers added
+Added a `servers` section listing the live URL (`https://maji-api-onrender-com.onrender.com/api`) and the local URL (`http://localhost:3001/api`), so the rendered docs show where to send requests.
+Why? The original contract had no base URL, so a reader of the docs couldn't make a request without asking us.
+
+9. 500 error response documented
+Each endpoint now lists a `500` response with the body `{ "error": "<message>" }`.
+Why? The implementation already returned this when the database is unreachable, but the contract only described the `200` case.
+
+10. Examples replaced with real data
+The examples now come from real API responses. The biggest change is `deliveryTime`: the old example was `"14:00"`, but the real values are delivery windows such as `"Afternoon (12pm - 6pm)"`.
+Why? The type (string) was always correct, but the old example suggested a clock time, which would mislead a consumer parsing the field.
+
+No endpoint paths, field names or field types changed.

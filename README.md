@@ -1,66 +1,245 @@
-# Maji-Platform
-_____
-A Kenyan 🇰🇪 frontend webapp that seeks to minimize struggle of sourcing reliable water solutions, built to connect the customers to the vendors.
-Current solutions,have a high minimum quantity for each order.This does not match the user's situation.
-MAJI-PLATFORM however we provide access to water from any quantity,from **20L** which is the minimum functional capacity.
-_____
+# Maji Platform API
 
-## Built with :
+## Overview
 
-- **React Js Framework**
-- **JavaScript**
-- **HTML and CSS**
-- **Leaflet**, for the map components
-- **FontAwesome**, for clean icons
-_____
+Maji is a Kenyan water delivery platform that connects customers with water vendors, from orders as small as 20 litres. This API exposes four read-only endpoints for **SkillsBridge**: estates with active orders, active delivery schedules, top-rated vendors and vendor locations. SkillsBridge uses this data to recommend local skill-exchange sessions and to suggest water vendor stations as meetup venues.
 
-## Stand-Out Features
+- **Base URL:** `https://maji-api-onrender-com.onrender.com/api`
+- **Rendered API docs:** [View the docs (Redoc)](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/NgwonoJeremy/maji-website/main/openapi.yaml)
+- **Contract:** [`openapi.yaml`](openapi.yaml)
+- All four endpoints are `GET`, take no parameters and return a JSON array.
 
-- A customer is able to order any quantity of water from 20L , which is unavailable with the current solutions.
-- Provides an admin dashboard where the admin can track the major metrics.
-- An easy to use UI.
+> **First request may be slow.** The API runs on Render's free tier, which sleeps after about 15 minutes without traffic. The first request after that can take up to a minute while the server wakes up. Later requests are fast.
 
-______
+## Quickstart
 
-## Running the app
-
-### Pre-requisities
-
-Make sure you have :
-- [Node.js] (https://nodejs.org/en) 
-- npm (usually comes with Node.js)
-
-### Installation
-
-1.Clone the repo
+Paste this into a browser, or run it in a terminal:
 
 ```bash
- https://github.com/NgwonoJeremy/maji-website.git
+curl https://maji-api-onrender-com.onrender.com/api/vendors/locations
 ```
 
-2.Navigate to project folder
+You should get a JSON array of 50 vendors, starting with:
+
+```json
+[
+  { "vendorId": 1, "businessName": "Chemchemi Fresh Water Co.", "estate": "Kasarani" },
+  { "vendorId": 2, "businessName": "Maji Safi Enterprises", "estate": "Madaraka" }
+]
+```
+
+## Authentication
+
+None. All four endpoints are public and need no API key, token or headers. *(Placeholder: authentication will be added in Week 9.)*
+
+## Endpoints
+
+The responses below are real output from the live API, shortened to the first items.
+
+### 1. Estates with active orders
+
+`GET /orders/active/estates`
+
+Each estate that has at least one order with status `pending`, `accepted` or `on the way`. Each estate appears once.
 
 ```bash
+curl https://maji-api-onrender-com.onrender.com/api/orders/active/estates
+```
+
+Response `200` (first 2 of 23):
+
+```json
+[
+  { "estate": "Lang'ata" },
+  { "estate": "South C" }
+]
+```
+
+| Field | Type | Required |
+|---|---|---|
+| estate | string | yes |
+
+### 2. Delivery schedules for active orders
+
+`GET /orders/active/schedules`
+
+Each distinct estate and delivery window among active orders. An estate can appear more than once if it has orders in different windows.
+
+```bash
+curl https://maji-api-onrender-com.onrender.com/api/orders/active/schedules
+```
+
+Response `200` (first 2 of 24):
+
+```json
+[
+  { "estate": "Lang'ata", "deliveryTime": "Afternoon (12pm - 6pm)" },
+  { "estate": "South C", "deliveryTime": "Morning (6am - 12pm)" }
+]
+```
+
+| Field | Type | Required | Notes |
+|---|---|---|---|
+| estate | string | yes | |
+| deliveryTime | string | yes | A delivery window such as `Morning (6am - 12pm)`, not a clock time |
+
+### 3. Top-rated vendors
+
+`GET /vendors/top-rated`
+
+The highest-rated **verified** vendor in each estate. If two vendors in an estate share the top rating, both are returned.
+
+```bash
+curl https://maji-api-onrender-com.onrender.com/api/vendors/top-rated
+```
+
+Response `200` (first 2 of 18):
+
+```json
+[
+  {
+    "vendorId": 17,
+    "businessName": "AquaFresh Nairobi",
+    "estate": "Dagoretti",
+    "rating": 4.4,
+    "isVerified": true,
+    "isOnline": false,
+    "ownerName": "Daniel Mutua",
+    "phone": "0718045704"
+  },
+  {
+    "vendorId": 27,
+    "businessName": "Fadhili Water Enterprises",
+    "estate": "Eldoret (Nairobi Area)",
+    "rating": 3,
+    "isVerified": true,
+    "isOnline": false,
+    "ownerName": "Eliud Kipchoge",
+    "phone": "0718124894"
+  }
+]
+```
+
+| Field | Type | Required | Notes |
+|---|---|---|---|
+| vendorId | integer | yes | |
+| businessName | string | yes | |
+| estate | string | yes | |
+| rating | number | yes | Between 3 and 5. Whole numbers appear without a decimal (`3`, not `3.0`) |
+| isVerified | boolean | yes | Always `true` for this endpoint |
+| isOnline | boolean | yes | |
+| ownerName | string | no | |
+| phone | string | no | Kept as a string to preserve the leading `0` |
+
+### 4. Vendor locations
+
+`GET /vendors/locations`
+
+Every vendor's station (business) name and primary estate.
+
+```bash
+curl https://maji-api-onrender-com.onrender.com/api/vendors/locations
+```
+
+Response `200` (first 2 of 50):
+
+```json
+[
+  { "vendorId": 1, "businessName": "Chemchemi Fresh Water Co.", "estate": "Kasarani" },
+  { "vendorId": 2, "businessName": "Maji Safi Enterprises", "estate": "Madaraka" }
+]
+```
+
+| Field | Type | Required |
+|---|---|---|
+| vendorId | integer | yes |
+| businessName | string | yes |
+| estate | string | yes |
+
+## Errors
+
+A successful call always returns status `200` and a JSON **array**. Check the status code first, because failures look different:
+
+| Situation | Status | Body |
+|---|---|---|
+| Server can't reach the database | `500` | JSON object with an `error` field (see below) |
+| Mistyped path (e.g. `/vendors/toprated`) | `404` | **HTML page, not JSON:** `<pre>Cannot GET /api/vendors/toprated</pre>` |
+| Server waking from sleep | — | No response for up to a minute, then a normal `200` |
+
+Real `500` response from `/vendors/locations`, captured while the database was unreachable:
+
+```json
+{ "error": "Failed to fetch vendor locations" }
+```
+
+The `error` text for each endpoint:
+
+| Endpoint | `error` value |
+|---|---|
+| `/orders/active/estates` | `Failed to fetch active estates` |
+| `/orders/active/schedules` | `Failed to fetch active delivery schedules` |
+| `/vendors/top-rated` | `Failed to fetch top-rated vendors` |
+| `/vendors/locations` | `Failed to fetch vendor locations` |
+
+If you get a `404` HTML page, check the path spelling and that it starts with `/api`.
+
+## Run the API locally
+
+Requires [Node.js](https://nodejs.org/) and a MySQL or MariaDB database (for example, XAMPP).
+
+**1. Clone and install**
+
+```bash
+git clone https://github.com/NgwonoJeremy/maji-website.git
 cd maji-website
-```
-
-3.Install Dependencies
-
-```bash
 npm install
 ```
 
-4.Running the app
+**2. Create the database**
+
+Create an empty database (for example `maji_platform`) in phpMyAdmin. Open its **SQL** tab, paste the full contents of [`db/railway_setup.sql`](db/railway_setup.sql) and click **Go**. This creates the tables and loads 100 customers, 50 vendors and 50 orders. The last query prints the counts, which should be `100, 50, 50, 25`.
+
+Run it **once** on an empty database. Running it again duplicates vendors and orders.
+
+**3. Create a `.env` file** in the project root (copy `.env.example`) and fill in your database details:
+
+```
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_NAME=maji_platform
+DB_USER=root
+DB_PASSWORD=
+JWT_SECRET=any-long-random-string
+PORT=3001
+```
+
+`DB_PASSWORD` is empty for a default XAMPP install. `JWT_SECRET` is only used by the login route, but it must be set.
+
+**4. Start the server**
+
+```bash
+npm run server
+```
+
+You should see:
+
+```
+Server running on http://localhost:3001
+Connected to MySQL — maji_platform
+```
+
+**5. Try it**
+
+```bash
+curl http://localhost:3001/api/vendors/locations
+```
+
+## About the web app
+
+This repository also contains the Maji web app (React, Leaflet, FontAwesome) for customers, vendors and admins. To run it, start the API as above, then in a second terminal:
 
 ```bash
 npm run dev
 ```
-Then open the local URL shown in your terminal (usually `http://localhost:5173`) in your browser.
-____
 
-
-
-
-
- 
-
+and open `http://localhost:5173`.

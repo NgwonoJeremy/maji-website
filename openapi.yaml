@@ -3,7 +3,16 @@ openapi: 3.0.0
 info:
   title: Maji Platform - SkillsBridge API
   version: 1.0.0
-  description: API exposed by Maji for SkillBridge to read estate, vendor and active deliverie schedules.
+  description: >
+    Read-only API exposed by Maji so that SkillsBridge can read estates with
+    active orders, active delivery schedules, top-rated vendors and vendor
+    locations. No authentication is required. All endpoints return JSON arrays.
+
+servers:
+  - url: https://maji-api-onrender-com.onrender.com/api
+    description: Live deployment (Render free tier; first request after ~15 min idle can take up to a minute)
+  - url: http://localhost:3001/api
+    description: Local development
 
 tags:
   - name: SkillsBridge
@@ -16,6 +25,9 @@ paths:
       tags:
         - SkillsBridge
       summary: Get estates with active orders
+      description: >
+        Returns each estate that has at least one order with status pending,
+        accepted or on the way. Each estate appears once.
       responses:
         '200':
           description: Estates where active orders are taking place
@@ -30,13 +42,18 @@ paths:
                   properties:
                     estate:
                       type: string
-                      example: Kasarani
+                      example: Lang'ata
+        '500':
+          $ref: '#/components/responses/ServerError'
 
   /orders/active/schedules:
     get:
       tags:
         - SkillsBridge
       summary: Get delivery schedules for active orders
+      description: >
+        Returns each distinct estate and delivery window pair among active
+        orders (status pending, accepted or on the way).
       responses:
         '200':
           description: Active delivery schedules by estate
@@ -52,16 +69,22 @@ paths:
                   properties:
                     estate:
                       type: string
-                      example: Kasarani
+                      example: Lang'ata
                     deliveryTime:
                       type: string
-                      example: "14:00"
+                      description: Delivery window chosen by the customer.
+                      example: Afternoon (12pm - 6pm)
+        '500':
+          $ref: '#/components/responses/ServerError'
 
   /vendors/top-rated:
     get:
       tags:
         - SkillsBridge
       summary: Get top-rated vendors
+      description: >
+        Returns the highest-rated verified vendor in each estate. If two
+        vendors in an estate share the top rating, both are returned.
       responses:
         '200':
           description: Top-rated vendors and their business information
@@ -81,31 +104,33 @@ paths:
                   properties:
                     vendorId:
                       type: integer
-                      example: 7
+                      example: 17
                     businessName:
                       type: string
-                      example: Maji Fresh
+                      example: AquaFresh Nairobi
                     estate:
                       type: string
-                      example: Kasarani
+                      example: Dagoretti
                     rating:
                       type: number
                       format: float
                       minimum: 3
                       maximum: 5
-                      example: 4.8
+                      example: 4.4
                     isVerified:
                       type: boolean
                       example: true
                     isOnline:
                       type: boolean
-                      example: true
+                      example: false
                     ownerName:
                       type: string
-                      example: John Doe
+                      example: Daniel Mutua
                     phone:
                       type: string
-                      example: "0712345678"
+                      example: "0718045704"
+        '500':
+          $ref: '#/components/responses/ServerError'
 
   /vendors/locations:
     get:
@@ -132,10 +157,27 @@ paths:
                   properties:
                     vendorId:
                       type: integer
-                      example: 7
+                      example: 1
                     businessName:
                       type: string
-                      example: Maji Fresh
+                      example: Chemchemi Fresh Water Co.
                     estate:
                       type: string
                       example: Kasarani
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+components:
+  responses:
+    ServerError:
+      description: The server could not read from the database.
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - error
+            properties:
+              error:
+                type: string
+                example: Failed to fetch vendor locations
