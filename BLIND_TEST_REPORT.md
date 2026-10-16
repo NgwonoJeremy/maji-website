@@ -1,11 +1,11 @@
 # Blind Test Report
 
 ## 1. When our README was tested
-- Tester team: <AgroConnect>
-- Outside my ring? <yes>
-- Result: <Succeeded!>
-- Time taken: <5 minutes>
-- Where they got stuck: <We did not get stuck. There was only some delay during the first request but that was expected and well documented.>
+- Tester team: `<AgroConnect>`
+- Outside my ring? `<yes>`
+- Result: `<Succeeded!>`
+- Time taken: `<5 minutes>`
+- Where they got stuck: `<We did not get stuck. There was only some delay during the first request but that was expected and well documented.>`
 
 ## 2. When I tested their README
 - Their API: <name>
