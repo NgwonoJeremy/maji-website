@@ -3,7 +3,11 @@ const cors = require("cors");
 const authRoutes = require("./routes/auth");
 const ordersRoutes = require("./routes/orders");
 const vendorRoutes = require("./routes/vendors");
+<<<<<<< HEAD
 const apiRoutes=require("./apis");
+=======
+const apisRoutes = require("./apis");
+>>>>>>> 5af3c363e959f62f856e5840e1d3e42cbc533cc2
 
 const app = express();
 
