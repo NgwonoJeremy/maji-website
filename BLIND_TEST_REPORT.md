@@ -10,7 +10,7 @@
 ## 2. When I tested their README
 - Their API: `<AgroConnect>`
 - Result: `<Succeeded!>`
-- Time taken: `<7 minutes>`
+- Time taken: `<7 minutes in CodeSpace>`
 - Where I got stuck: ``<On our own Windows laptop, npm ci did not complete and npm start failed with Cannot find package 'cors'. That error does not mention Node, so a reader would not connect it to the version mismatch.>`
 
 ## 3. What I fixed and what is still open
