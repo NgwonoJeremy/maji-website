@@ -8,6 +8,7 @@ router.get("/", async (req, res) => {
     const [rows] = await db.query(`
       SELECT
         orders.id,
+        orders.customer_id,
         orders.estate,
         orders.volume,
         orders.delivery_time,

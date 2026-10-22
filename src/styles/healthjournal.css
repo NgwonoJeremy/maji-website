@@ -1,0 +1,158 @@
+/* Health Journal page (customer). Reuses the dashboard theme variables. */
+
+.journal-intro,
+.journal-full,
+.journal-footer {
+  grid-column: span 12;
+}
+
+.journal-wide {
+  grid-column: span 7;
+}
+
+.journal-narrow {
+  grid-column: span 5;
+}
+
+.journal-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin: 0.25rem 0 0.5rem;
+}
+
+.journal-panel h2 {
+  margin-bottom: 0.15rem;
+}
+
+.journal-panel > .eyebrow {
+  margin-bottom: 1rem;
+}
+
+/* Notice box: "no alerts" / "place an order first" */
+.journal-notice {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.03);
+  padding: 1rem;
+}
+
+.journal-notice h3 {
+  margin-bottom: 0.15rem;
+}
+
+.journal-notice-ok {
+  border-color: rgba(76, 175, 80, 0.3);
+  background: rgba(76, 175, 80, 0.08);
+}
+
+.journal-notice-icon {
+  color: var(--success);
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+
+/* Fallback box: a section's partner data could not be loaded */
+.journal-notice-error {
+  border-color: rgba(244, 67, 54, 0.3);
+  background: rgba(244, 67, 54, 0.08);
+}
+
+.journal-notice-error-icon {
+  color: var(--danger);
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+
+/* Rows inside the existing .history-item cards */
+.journal-panel .history-item {
+  align-items: center;
+}
+
+.journal-row-main {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.journal-row-main h3 {
+  margin-bottom: 0.1rem;
+}
+
+.journal-rank {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--blue-dim);
+  font-family: 'Poppins', sans-serif;
+  flex-shrink: 0;
+}
+
+.journal-rating {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  white-space: nowrap;
+}
+
+.journal-rating strong {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.2rem;
+  color: var(--text);
+}
+
+.journal-rating small {
+  color: var(--text-muted);
+}
+
+.journal-star {
+  color: var(--blue-light);
+  font-size: 0.85rem;
+}
+
+.journal-pill-icon {
+  color: var(--blue-light);
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.journal-alert-icon {
+  color: var(--danger);
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+/* Keep pill colours: .history-item span would otherwise turn them blue */
+.journal-panel .history-item .status-delivered { color: var(--success); }
+.journal-panel .history-item .status-pending { color: var(--warning); }
+.journal-panel .history-item .status-cancelled { color: var(--danger); }
+.journal-panel .history-item .status-processing { color: var(--blue-light); }
+
+.journal-footer {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+@media (max-width: 1024px) {
+  .journal-wide,
+  .journal-narrow {
+    grid-column: span 12;
+  }
+}
+
+@media (max-width: 768px) {
+  .journal-intro,
+  .journal-full,
+  .journal-wide,
+  .journal-narrow,
+  .journal-footer {
+    grid-column: 1;
+  }
+}

@@ -3,6 +3,7 @@ import './App.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from "./Pages/Home";
 import CustomerDashboard from "./Pages/customer/CustomerDashboard";
+import HealthJournal from "./Pages/customer/HealthJournal";
 import AdminDashboard from './Pages/admin/Admin_dash';
 import AllOrders from './Pages/admin/AllOrders';
 import AllVendors from './Pages/admin/AllVendors';
@@ -20,6 +21,12 @@ function App() {
           <Route path ="/customer" element={
             <ProtectedRoute allowedRole="customer">
               <CustomerDashboard/>
+            </ProtectedRoute>
+          }/>
+
+          <Route path ="/customer/health" element={
+            <ProtectedRoute allowedRole="customer">
+              <HealthJournal/>
             </ProtectedRoute>
           }/>
 

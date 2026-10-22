@@ -1,0 +1,30 @@
+/* Customer navbar links */
+.navbar-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.navbar-links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.navbar-links a {
+  color: var(--text-muted);
+  font-weight: 500;
+  padding-bottom: 0.25rem;
+  border-bottom: 2px solid transparent;
+  transition: color var(--transition), border-color var(--transition);
+}
+
+.navbar-links a:hover {
+  color: var(--text);
+  text-decoration: none;
+}
+
+.navbar-links a.active {
+  color: var(--text);
+  border-bottom-color: var(--blue);
+}
