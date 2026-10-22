@@ -7,7 +7,7 @@ const AdminDashboard = () => {
 
   const[vendors, setVendors]=useState([]);
   const[orders, setOrders]=useState([]);
-  const[loading,setLoading]=useState([]);
+  const[loading,setLoading]=useState(true);
   const[error,setError]=useState("");
 
   useEffect(() => {
@@ -18,11 +18,15 @@ const AdminDashboard = () => {
           fetch("http://localhost:3001/api/vendors"),
         ]);
 
+        if (!ordersRes.ok || !vendorsRes.ok) {
+          throw new Error(`Server responded with ${ordersRes.status} / ${vendorsRes.status}`);
+        }
+
         const ordersData  = await ordersRes.json();
         const vendorsData = await vendorsRes.json();
 
-        setOrders(ordersData);
-        setVendors(vendorsData);
+        setOrders(Array.isArray(ordersData) ? ordersData : []);
+        setVendors(Array.isArray(vendorsData) ? vendorsData : []);
 
       } catch (err) {
         console.error("Failed to fetch dashboard data:", err);
@@ -41,7 +45,7 @@ const AdminDashboard = () => {
   const displayedVendors = vendors.slice(0, 5);
 
   const totalRevenue = orders.reduce(
-    (sum,order) => sum + Number(order.total_Amount ||0),0
+    (sum,order) => sum + Number(order.total_amount ||0),0
   );
   if (loading) {
     return (
@@ -101,7 +105,7 @@ const AdminDashboard = () => {
             </tbody>
           </table>
           <div className="table-footer">
-            <span>Showing 5 of {orders.length} orders</span>
+            <span>Showing {displayedOrders.length} of {orders.length} orders</span>
           </div>
         </section>
         
@@ -136,7 +140,7 @@ const AdminDashboard = () => {
             </tbody>
           </table>
           <div className="table-footer">
-            <span>Showing 5 of {vendors.length} vendors</span>
+            <span>Showing {displayedVendors.length} of {vendors.length} vendors</span>
           </div>
         </section>
 

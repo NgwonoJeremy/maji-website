@@ -10,7 +10,7 @@ import VendorRegister from './Pages/vendor/VendorRegister';
 import VendorDashboard from './Pages/vendor/VendorDashboard';
 import Login from './Pages/Login';
 import Register from './Pages/Register';
-import ProtectedRoute from "./Components/ProtectedRoute";
+import ProtectedRoute from "./components/ProtectedRoute";
 function App() {
   return (
     <div className="app">
@@ -29,8 +29,16 @@ function App() {
             </ProtectedRoute>
           }/>
 
-          <Route path="/orders" element={<AllOrders />} />
-          <Route path="/vendors" element={<AllVendors />} />
+          <Route path="/orders" element={
+            <ProtectedRoute allowedRole="admin">
+              <AllOrders/>
+            </ProtectedRoute>
+          }/>
+          <Route path="/vendors" element={
+            <ProtectedRoute allowedRole="admin">
+              <AllVendors/>
+            </ProtectedRoute>
+          }/>
           <Route path="/vendor/register" element={<VendorRegister />} />
 
           <Route path ="/vendor/dashboard" element={

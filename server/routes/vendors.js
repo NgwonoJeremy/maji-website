@@ -9,6 +9,8 @@ router.get("/" ,async(req,res)=> {
             `
             Select
               vendors.id,
+              vendors.user_id,
+              customers.name AS vendor_name,
               vendors.estate,
               vendors.is_verified,
               vendors.business_name,  
@@ -22,7 +24,7 @@ router.get("/" ,async(req,res)=> {
         res.json(rows);
     } catch(err) {
         console.error("Get all vendors error", err);
-        res.json({message : "Failed to fetch orders"});
+        res.status(500).json({message : "Failed to fetch vendors"});
     }
 });
 
