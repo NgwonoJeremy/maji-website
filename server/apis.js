@@ -104,14 +104,30 @@ router.get("/vendors/top-rated", async (req, res) => {
 
 //api to get station/business name and primary estate
 router.get("/vendors/locations", async (req, res) => {
+    const { estate } = req.query;
+
+    if (estate !== undefined && (typeof estate !== "string" || !estate.trim())) {
+        return res.status(400).json({
+            error: "estate must be a non-empty string"
+        });
+    }
+
     try {
-        const [rows] = await db.query(`
+        let sql = `
             SELECT
                 v.id AS vendorId,
                 v.business_name AS businessName,
                 v.estate
             FROM vendors v
-        `);
+        `;
+        const params = [];
+
+        if (estate) {
+            sql += " WHERE v.estate = ?";
+            params.push(estate.trim());
+        }
+
+        const [rows] = await db.query(sql, params);
 
         const result = rows.map(row => ({
             vendorId: row.vendorId,

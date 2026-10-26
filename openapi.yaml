@@ -140,7 +140,20 @@ paths:
       description: >
         SkillsBridge needs to read each water vendor's station name and
         primary target estate in order to suggest those vendor locations
-        as physical meetup venues for skill sessions.
+        as physical meetup venues for skill sessions. Pass the optional
+        estate parameter to get only the vendors in one estate.
+      parameters:
+        - name: estate
+          in: query
+          required: false
+          description: >
+            Only return vendors in this estate (e.g. Kasarani). Must match the
+            estate name exactly as Maji spells it; capitalisation is ignored.
+            Omit it to return all vendors. An estate with no vendors returns
+            an empty array.
+          schema:
+            type: string
+          example: Kasarani
       responses:
         '200':
           description: Water vendor station names and primary target estates
@@ -164,6 +177,18 @@ paths:
                     estate:
                       type: string
                       example: Kasarani
+        '400':
+          description: The estate parameter was provided but is empty.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - error
+                properties:
+                  error:
+                    type: string
+                    example: estate must be a non-empty string
         '500':
           $ref: '#/components/responses/ServerError'
 
