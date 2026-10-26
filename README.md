@@ -7,7 +7,7 @@ Maji is a Kenyan water delivery platform that connects customers with water vend
 - **Base URL:** `https://maji-api-onrender-com.onrender.com/api`
 - **Rendered API docs:** [View the docs (Redoc)](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/NgwonoJeremy/maji-website/main/openapi.yaml)
 - **Contract:** [`openapi.yaml`](openapi.yaml)
-- All four endpoints are `GET`, take no parameters and return a JSON array.
+- All four endpoints are `GET` and return a JSON array. Only `/vendors/locations` takes a parameter: an optional `estate` filter.
 
 > **First request may be slow.** The API runs on Render's free tier, which sleeps after about 15 minutes without traffic. The first request after that can take up to a minute while the server wakes up. Later requests are fast.
 
@@ -135,7 +135,13 @@ Response `200` (first 2 of 18):
 
 `GET /vendors/locations`
 
-Every vendor's station (business) name and primary estate.
+Every vendor's station (business) name and primary estate. Add the optional `estate` parameter to get only the vendors in one estate.
+
+| Query parameter | Required | Description |
+|---|---|---|
+| `estate` | no | Only return vendors in this estate, e.g. `Kasarani`. Must match Maji's spelling (e.g. `Lang'ata`, not `Langata`); capitalisation is ignored. Omit it to get all vendors. |
+
+**All vendors:**
 
 ```bash
 curl https://maji-api-onrender-com.onrender.com/api/vendors/locations
@@ -156,12 +162,32 @@ Response `200` (first 2 of 50):
 | businessName | string | yes |
 | estate | string | yes |
 
+**Vendors in one estate:**
+
+```bash
+curl "https://maji-api-onrender-com.onrender.com/api/vendors/locations?estate=Kasarani"
+```
+
+Response `200`:
+
+```json
+[
+  { "vendorId": 1, "businessName": "Chemchemi Fresh Water Co.", "estate": "Kasarani" },
+  { "vendorId": 30, "businessName": "Waridi Water Co.", "estate": "Kasarani" }
+]
+```
+
+- An estate with no vendors returns `200` with an empty array `[]`.
+- An empty value (`?estate=`) returns `400` with `{ "error": "estate must be a non-empty string" }`.
+- In code, encode the estate name, e.g. `encodeURIComponent("Lang'ata")`. Use `/orders/active/estates` to see Maji's estate names.
+
 ## Errors
 
 A successful call always returns status `200` and a JSON **array**. Check the status code first, because failures look different:
 
 | Situation | Status | Body |
 |---|---|---|
+| `estate` given but empty (`/vendors/locations?estate=`) | `400` | `{ "error": "estate must be a non-empty string" }` |
 | Server can't reach the database | `500` | JSON object with an `error` field (see below) |
 | Mistyped path (e.g. `/vendors/toprated`) | `404` | **HTML page, not JSON:** `<pre>Cannot GET /api/vendors/toprated</pre>` |
 | Server waking from sleep | — | No response for up to a minute, then a normal `200` |
