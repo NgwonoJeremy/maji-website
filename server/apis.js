@@ -145,6 +145,63 @@ router.get("/vendors/locations", async (req, res) => {
     }
 });
 
+//api to get every vendor with contact details (optional estate filter)
+router.get("/vendors/all", async (req, res) => {
+    const { estate } = req.query;
+
+    if (estate !== undefined && (typeof estate !== "string" || !estate.trim())) {
+        return res.status(400).json({
+            error: "estate must be a non-empty string"
+        });
+    }
+
+    try {
+        let sql = `
+            SELECT
+                v.id AS vendorId,
+                v.business_name AS businessName,
+                v.estate,
+                v.rating,
+                v.is_verified AS isVerified,
+                v.is_online AS isOnline,
+                c.name AS ownerName,
+                c.phone
+            FROM vendors v
+            JOIN customers c
+                ON v.user_id = c.id
+        `;
+        const params = [];
+
+        if (estate) {
+            sql += " WHERE v.estate = ?";
+            params.push(estate.trim());
+        }
+
+        sql += " ORDER BY v.estate, v.rating DESC";
+
+        const [rows] = await db.query(sql, params);
+
+        const result = rows.map(row => ({
+            vendorId: row.vendorId,
+            businessName: row.businessName,
+            estate: row.estate,
+            rating: Number(row.rating),
+            isVerified: Boolean(row.isVerified),
+            isOnline: Boolean(row.isOnline),
+            ownerName: row.ownerName,
+            phone: row.phone
+        }));
+
+        res.status(200).json(result);
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            error: "Failed to fetch vendors"
+        });
+    }
+});
+
 //Maji APIS
 //CREATE A NEW ORDER
 

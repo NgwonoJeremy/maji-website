@@ -2,12 +2,12 @@
 
 ## Overview
 
-Maji is a Kenyan water delivery platform that connects customers with water vendors, from orders as small as 20 litres. This API exposes four read-only endpoints for **SkillsBridge**: estates with active orders, active delivery schedules, top-rated vendors and vendor locations. SkillsBridge uses this data to recommend local skill-exchange sessions and to suggest water vendor stations as meetup venues.
+Maji is a Kenyan water delivery platform that connects customers with water vendors, from orders as small as 20 litres. This API exposes five read-only endpoints for **SkillsBridge**: estates with active orders, active delivery schedules, top-rated vendors and vendor locations. SkillsBridge uses this data to recommend local skill-exchange sessions and to suggest water vendor stations as meetup venues.
 
 - **Base URL:** `https://maji-api-onrender-com.onrender.com/api`
 - **Rendered API docs:** [View the docs (Redoc)](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/NgwonoJeremy/maji-website/main/openapi.yaml)
 - **Contract:** [`openapi.yaml`](openapi.yaml)
-- All four endpoints are `GET` and return a JSON array. Only `/vendors/locations` takes a parameter: an optional `estate` filter.
+- All five endpoints are `GET` and return a JSON array. Only `/vendors/locations` and `/vendors/all` take a parameter: an optional `estate` filter.
 
 > **First request may be slow.** The API runs on Render's free tier, which sleeps after about 15 minutes without traffic. The first request after that can take up to a minute while the server wakes up. Later requests are fast.
 
@@ -180,6 +180,30 @@ Response `200`:
 - An estate with no vendors returns `200` with an empty array `[]`.
 - An empty value (`?estate=`) returns `400` with `{ "error": "estate must be a non-empty string" }`.
 - In code, encode the estate name, e.g. `encodeURIComponent("Lang'ata")`. Use `/orders/active/estates` to see Maji's estate names.
+
+### 5. All vendors
+
+`GET /vendors/all`
+
+Every vendor with business name, estate, rating, status and owner contact details, ordered by estate then rating (highest first). Add the optional `estate` parameter to get only the vendors in one estate.
+
+```bash
+curl https://maji-api-onrender-com.onrender.com/api/vendors/all
+curl "https://maji-api-onrender-com.onrender.com/api/vendors/all?estate=Kasarani"
+```
+
+| Field | Type | Required | Notes |
+|---|---|---|---|
+| vendorId | integer | yes | |
+| businessName | string | yes | |
+| estate | string | yes | |
+| rating | number | yes | |
+| isVerified | boolean | yes | |
+| isOnline | boolean | yes | |
+| ownerName | string | no | |
+| phone | string | no | Kept as a string to preserve the leading `0` |
+
+An empty `estate` (`/vendors/all?estate=`) returns `400` with `{ "error": "estate must be a non-empty string" }`.
 
 ## Errors
 

@@ -192,6 +192,83 @@ paths:
         '500':
           $ref: '#/components/responses/ServerError'
 
+  /vendors/all:
+    get:
+      tags:
+        - SkillsBridge
+      summary: Get all vendors
+      description: >
+        Returns every water vendor on Maji with business name, estate, rating,
+        status and owner contact details, so SkillsBridge can load the full
+        vendor list into its own system. Pass the optional estate parameter to
+        get only the vendors in one estate.
+      parameters:
+        - name: estate
+          in: query
+          required: false
+          description: >
+            Only return vendors in this estate (e.g. Kasarani). Omit it to
+            return all vendors.
+          schema:
+            type: string
+          example: Kasarani
+      responses:
+        '200':
+          description: All vendors, ordered by estate then rating (highest first)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  required:
+                    - vendorId
+                    - businessName
+                    - estate
+                    - rating
+                    - isVerified
+                    - isOnline
+                  properties:
+                    vendorId:
+                      type: integer
+                      example: 17
+                    businessName:
+                      type: string
+                      example: AquaFresh Nairobi
+                    estate:
+                      type: string
+                      example: Dagoretti
+                    rating:
+                      type: number
+                      format: float
+                      example: 4.4
+                    isVerified:
+                      type: boolean
+                      example: true
+                    isOnline:
+                      type: boolean
+                      example: false
+                    ownerName:
+                      type: string
+                      example: Daniel Mutua
+                    phone:
+                      type: string
+                      example: "0718045704"
+        '400':
+          description: The estate parameter was provided but is empty.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - error
+                properties:
+                  error:
+                    type: string
+                    example: estate must be a non-empty string
+        '500':
+          $ref: '#/components/responses/ServerError'
+
 components:
   responses:
     ServerError:

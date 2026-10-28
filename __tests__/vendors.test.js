@@ -190,3 +190,54 @@ describe("vendor endpoints", () => {
     });
   });
 });
+
+describe("GET /api/vendors/all", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("returns every vendor with typed fields", async () => {
+    db.query.mockResolvedValueOnce([[
+      {
+        vendorId: 3,
+        businessName: "Maji Fresh",
+        estate: "Kasarani",
+        rating: "4.5",
+        isVerified: 1,
+        isOnline: 1,
+        ownerName: "Test Owner",
+        phone: "0712345678"
+      }
+    ], []]);
+
+    const response = await request(app).get("/api/vendors/all");
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual([{
+      vendorId: 3,
+      businessName: "Maji Fresh",
+      estate: "Kasarani",
+      rating: 4.5,
+      isVerified: true,
+      isOnline: true,
+      ownerName: "Test Owner",
+      phone: "0712345678"
+    }]);
+  });
+
+  it("filters by estate with a parameterized query", async () => {
+    db.query.mockResolvedValueOnce([[], []]);
+
+    const response = await request(app).get("/api/vendors/all?estate=Kasarani");
+
+    expect(response.status).toBe(200);
+    expect(db.query.mock.calls[0][1]).toEqual(["Kasarani"]);
+  });
+
+  it("rejects an empty estate with 400", async () => {
+    const response = await request(app).get("/api/vendors/all?estate=");
+
+    expect(response.status).toBe(400);
+    expect(db.query).not.toHaveBeenCalled();
+  });
+});
