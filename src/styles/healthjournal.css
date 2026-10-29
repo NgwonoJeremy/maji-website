@@ -134,6 +134,43 @@
 .journal-panel .history-item .status-cancelled { color: var(--danger); }
 .journal-panel .history-item .status-processing { color: var(--blue-light); }
 
+/* Ordering: quantity box and Order button inside a stock row */
+.journal-order-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-shrink: 0;
+}
+
+.journal-order-controls input {
+  width: 74px;
+  text-align: center;
+  cursor: text;
+  background-image: none; /* the global input style adds a dropdown arrow */
+  padding: 0 0.5rem;
+}
+
+.journal-order-controls button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.journal-order-notice {
+  margin-bottom: 1rem;
+}
+
+.journal-comment {
+  font-style: italic;
+}
+
+.journal-note {
+  margin-top: 0.75rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
 .journal-footer {
   font-size: 0.8rem;
   color: var(--text-muted);

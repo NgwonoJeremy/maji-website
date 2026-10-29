@@ -104,7 +104,7 @@ router.get("/vendors/top-rated", partnerOnly, async (req, res) => {
 });
 
 //api to get station/business name and primary estate
-router.get("/vendors/locations", async (req, res) => {
+router.get("/vendors/locations", partnerOnly, async (req, res) => {
     const { estate } = req.query;
 
     if (estate !== undefined && (typeof estate !== "string" || !estate.trim())) {

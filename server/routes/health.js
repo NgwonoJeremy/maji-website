@@ -1,23 +1,29 @@
 // Health Journal routes: Maji's server calls the SafeMeds API (our upstream partner)
 // and passes back only the fields the Health Journal page needs.
-// The browser never talks to SafeMeds directly.
+// The browser never talks to SafeMeds directly, so the SafeMeds key stays on the server.
 const express = require("express");
+const db = require("../db");
 const router = express.Router();
 
-const PARTNER_URL = process.env.PARTNER_URL;         // SafeMeds base URL, set in .env
-const PARTNER_API_KEY = process.env.PARTNER_API_KEY; // optional: SafeMeds needs no key today
+const SAFEMEDS_URL = process.env.SAFEMEDS_URL;         // SafeMeds base URL, set in .env
+const SAFEMEDS_API_KEY = process.env.SAFEMEDS_API_KEY; // SafeMeds key, set in .env, never committed
 
-// Calls one SafeMeds endpoint. Returns the parsed JSON array,
-// or throws an error whose message says what went wrong.
-async function callSafeMeds(path) {
-  if (!PARTNER_URL) {
-    throw new Error("PARTNER_URL is not set in .env");
+// Sends one request to SafeMeds and returns the raw fetch Response.
+async function safeMedsFetch(path, options = {}) {
+  if (!SAFEMEDS_URL) {
+    throw new Error("SAFEMEDS_URL is not set in .env");
   }
 
-  const headers = {};
-  if (PARTNER_API_KEY) headers["X-API-Key"] = PARTNER_API_KEY;
+  const headers = { ...(options.headers || {}) };
+  if (SAFEMEDS_API_KEY) headers["X-API-Key"] = SAFEMEDS_API_KEY;
 
-  const response = await fetch(`${PARTNER_URL}${path}`, { headers });
+  return fetch(`${SAFEMEDS_URL}${path}`, { ...options, headers });
+}
+
+// GETs one SafeMeds list endpoint. Returns the parsed JSON array,
+// or throws an error whose message says what went wrong.
+async function getList(path) {
+  const response = await safeMedsFetch(path);
 
   if (!response.ok) {
     throw new Error(`SafeMeds returned ${response.status}`);
@@ -41,6 +47,7 @@ function partnerUnavailable(res, what, err) {
 
 // GET /api/health/alerts?estate=Kasarani
 // Waterborne-illness alerts for the customer's estate over the last 30 days.
+// SafeMeds only returns alerts from its own recent window, and only for regions it has data for.
 router.get("/alerts", async (req, res) => {
   const { estate } = req.query;
 
@@ -53,22 +60,20 @@ router.get("/alerts", async (req, res) => {
     .slice(0, 10); // YYYY-MM-DD, as SafeMeds expects
 
   try {
-    const alerts = await callSafeMeds(
-      `/health-signals/area-alerts?region=${encodeURIComponent(estate.trim())}&since=${since}`
+    const alerts = await getList(
+      `/v1/health-signals/area-alerts?region=${encodeURIComponent(estate.trim())}&since=${since}`
     );
 
-    // SafeMeds currently ignores `since` and can return older alerts,
-    // so Maji keeps only alerts detected on or after `since` itself.
-    const recent = alerts.filter(
-      (alert) => alert.detectedAt && alert.detectedAt.slice(0, 10) >= since
-    );
-
+    // SafeMeds sends aggregate counts and no severity, so the page shows the
+    // illness, the date and how far above normal the prescriptions were.
     res.json(
-      recent.map((alert) => ({
-        alertId: alert.alertId,
-        illnessType: alert.illnessType,
-        severity: alert.severity,
-        detectedAt: alert.detectedAt,
+      alerts.map((alert) => ({
+        alertId: `${alert.illnessCategory}-${alert.alertDate}`,
+        illnessType: alert.illnessCategory,
+        detectedAt: alert.alertDate,
+        prescriptionCount: alert.prescriptionCount,
+        spikeRatio: alert.spikeRatio,
+        signalMode: alert.signalMode,
       }))
     );
   } catch (err) {
@@ -77,10 +82,10 @@ router.get("/alerts", async (req, res) => {
 });
 
 // GET /api/health/products
-// Water-purification products, highest rated first.
+// Top-rated water-treatment products (SafeMeds returns the top 3).
 router.get("/products", async (req, res) => {
   try {
-    const products = await callSafeMeds("/products/water-purification?sort=rating");
+    const products = await getList("/reviews");
 
     res.json(
       products.map((product) => ({
@@ -88,6 +93,7 @@ router.get("/products", async (req, res) => {
         productName: product.productName,
         averageRating: product.averageRating,
         reviewCount: product.reviewCount,
+        topComment: product.topComment,
       }))
     );
   } catch (err) {
@@ -95,11 +101,11 @@ router.get("/products", async (req, res) => {
   }
 });
 
-// GET /api/health/chlorine
-// Chlorine tablets currently in stock at SafeMeds.
-router.get("/chlorine", async (req, res) => {
+// GET /api/health/stock
+// Water-treatment tablets currently in stock at SafeMeds.
+router.get("/stock", async (req, res) => {
   try {
-    const items = await callSafeMeds("/inventory?product=chlorine-tablets&available=true");
+    const items = await getList("/inventory?available=true");
 
     res.json(
       items.map((item) => ({
@@ -110,7 +116,110 @@ router.get("/chlorine", async (req, res) => {
       }))
     );
   } catch (err) {
-    partnerUnavailable(res, "chlorine stock", err);
+    partnerUnavailable(res, "stock", err);
+  }
+});
+
+// POST /api/health/orders
+// Body: { customerId, productId, productName, quantity }
+// Places the order with SafeMeds, then keeps a copy in Maji's own database so the
+// customer can see it in the Health Journal.
+router.post("/orders", async (req, res) => {
+  const { customerId, productId, productName, quantity } = req.body || {};
+
+  if (!Number.isInteger(customerId) || customerId <= 0) {
+    return res.status(400).json({ message: "customerId must be a positive whole number" });
+  }
+  if (!Number.isInteger(productId) || productId <= 0) {
+    return res.status(400).json({ message: "productId must be a positive whole number" });
+  }
+  if (!Number.isInteger(quantity) || quantity <= 0 || quantity > 100) {
+    return res.status(400).json({ message: "quantity must be a whole number from 1 to 100" });
+  }
+  if (typeof productName !== "string" || !productName.trim() || productName.length > 120) {
+    return res.status(400).json({ message: "productName is required" });
+  }
+
+  try {
+    // The customer's name comes from Maji's database, not from the browser.
+    const [customers] = await db.query("SELECT name FROM customers WHERE id = ?", [customerId]);
+
+    if (customers.length === 0) {
+      return res.status(404).json({ message: "Customer not found" });
+    }
+
+    const response = await safeMedsFetch("/orders", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ productId, quantity, customerName: customers[0].name }),
+    });
+
+    // SafeMeds refused the order itself (for example, bad product): tell the customer why.
+    if (response.status === 400) {
+      const body = await response.json().catch(() => ({}));
+      return res.status(400).json({ message: body.message || "SafeMeds could not place this order" });
+    }
+
+    if (!response.ok) {
+      throw new Error(`SafeMeds returned ${response.status}`);
+    }
+
+    const order = await response.json();
+
+    let recorded = true;
+    try {
+      await db.query(
+        `INSERT INTO health_orders
+           (customer_id, safemeds_order_id, product_id, product_name, quantity, status)
+         VALUES (?, ?, ?, ?, ?, ?)`,
+        [customerId, order.orderId, productId, productName.trim(), quantity, order.status || "Pending"]
+      );
+    } catch (err) {
+      // The order exists at SafeMeds, so do not report a failure; just log it.
+      recorded = false;
+      console.error("Health order saved at SafeMeds but not in Maji:", err.message);
+    }
+
+    res.status(201).json({
+      orderId: order.orderId,
+      productId,
+      productName: productName.trim(),
+      quantity,
+      status: order.status || "Pending",
+      recorded,
+    });
+  } catch (err) {
+    partnerUnavailable(res, "order", err);
+  }
+});
+
+// GET /api/health/orders?customerId=3
+// The customer's treatment orders, newest first.
+router.get("/orders", async (req, res) => {
+  const customerId = Number(req.query.customerId);
+
+  if (!Number.isInteger(customerId) || customerId <= 0) {
+    return res.status(400).json({ message: "customerId must be a positive whole number" });
+  }
+
+  try {
+    const [rows] = await db.query(
+      `SELECT safemeds_order_id AS orderId,
+              product_id AS productId,
+              product_name AS productName,
+              quantity,
+              status,
+              created_at AS createdAt
+         FROM health_orders
+        WHERE customer_id = ?
+        ORDER BY created_at DESC`,
+      [customerId]
+    );
+
+    res.json(rows);
+  } catch (err) {
+    console.error("Health orders list failed:", err.message);
+    res.status(500).json({ message: "Failed to load your orders" });
   }
 });
 

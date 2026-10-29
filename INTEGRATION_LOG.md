@@ -7,11 +7,32 @@ Week 10 — Integration. Maji consumes the **SafeMeds** API (upstream partner) a
 | | |
 |---|---|
 | **Upstream partner** | SafeMeds (Group 3) |
-| **Partner base URL** | `https://safemeds-iap-api.onrender.com/api` (stored in `.env` as `PARTNER_URL`) |
-| **Partner contract** | [SafeMeds `openapi.yaml`](https://github.com/n4talii/SAFEMEDS_IAP/blob/main/SafeMeds.App/openapi.yaml) |
-| **API key** | None needed. SafeMeds' README says no key is required, and our calls without one succeeded. `PARTNER_API_KEY` is left empty; the code sends an `X-API-Key` header only if it is set. |
+| **Partner base URL** | `https://safemeds-api-bxuv.onrender.com` (stored in `.env` as `SAFEMEDS_URL`). SafeMeds' real-data API; we switched to it on 29 Oct 2026 (see "Switch to the real-data API" below). |
+| **Partner contract** | [SafeMeds `api_testing_documentation.md`](https://github.com/Mogaya-18/safeMeds-MajiApp-API/blob/main/api_testing_documentation.md) (real-data API). The original contract is [SafeMeds `openapi.yaml`](https://github.com/n4talii/SAFEMEDS_IAP/blob/main/SafeMeds.App/openapi.yaml). |
+| **API key** | Required on every route of the real-data API (`X-API-Key`, 401 without it). Stored in `.env` as `SAFEMEDS_API_KEY`, sent only by Maji's server, never committed. Key requested from SafeMeds; until it arrives, live calls return 401 and the page shows its safe fallback. (The first API needed no key.) |
 | **Feature built** | Health Journal page for customers (`/customer/health`) |
 | **Downstream partner** | SkillsBridge, calling our 4 endpoints at `https://maji-api-onrender-com.onrender.com/api` |
+
+## Switch to the real-data API (29 Oct 2026)
+
+The first SafeMeds API served demonstration records. SafeMeds then published a second API backed by their real database, and the Health Journal now uses only that one.
+
+| What changed | Before | Now |
+|---|---|---|
+| Base URL | `https://safemeds-iap-api.onrender.com/api` | `https://safemeds-api-bxuv.onrender.com` (no `/api`) |
+| Key | None | `X-API-Key` on every route |
+| Products | `/products/water-purification?sort=rating` | `/reviews`: top 3 only, adds `topComment` |
+| Stock | `/inventory?product=chlorine-tablets&available=true` | `/inventory?available=true`: four water treatment products, so the section is no longer chlorine only |
+| Alerts | `/health-signals/area-alerts?region&since` returning `alertId`, `illnessType`, `severity`, `detectedAt` | `/v1/health-signals/area-alerts?region&since` returning `illnessCategory`, `alertDate`, `prescriptionCount`, `spikeRatio`, `signalMode` (no severity) |
+| Interaction | None (read only) | `POST /orders`: a customer orders treatment tablets from the Health Journal |
+
+How Maji handles the differences:
+
+- **Alerts have no severity.** The page shows the illness, the date and the prescription count (with how many times the usual level). Alerts carry `signalMode: "demo"`, so the page says they are demonstration signals, not confirmed outbreaks.
+- **Region names.** SafeMeds matches `region` exactly against its own data (their example is `nairobi-demo-kibera`). Maji sends the customer's estate name, so an estate SafeMeds does not know returns an empty list. To agree with SafeMeds.
+- **Orders.** The customer's name comes from Maji's database, not from the browser. After SafeMeds accepts the order, Maji saves a copy in `health_orders` (`db/health_orders.sql`) so the order shows in "Your treatment orders". SafeMeds has no way to read an order back, so the status shown is the one SafeMeds returned when the order was placed (`Pending`).
+- **No key yet.** Until SafeMeds sends the key, calls return 401 and Maji answers the page with its usual 502 "Partner data unavailable", so each section shows its "unavailable" notice.
+- **SafeMeds' `GET /tasks`** is a test route for the key check and is not used.
 
 ## First call, outside our app (Part B)
 
@@ -34,9 +55,11 @@ The browser only calls Maji's server, so SafeMeds' address (and any future key) 
 
 | Maji route | Calls SafeMeds | Shown in section |
 |---|---|---|
-| `GET /api/health/alerts?estate=…` | `/health-signals/area-alerts?region=<estate>&since=<30 days ago>` | In your area |
-| `GET /api/health/products` | `/products/water-purification?sort=rating` | Make it safe to drink |
-| `GET /api/health/chlorine` | `/inventory?product=chlorine-tablets&available=true` | Where to find chlorine tablets |
+| `GET /api/health/alerts?estate=…` | `GET /v1/health-signals/area-alerts?region=<estate>&since=<30 days ago>` | In your area |
+| `GET /api/health/products` | `GET /reviews` (top 3 by rating) | Make it safe to drink |
+| `GET /api/health/stock` | `GET /inventory?available=true` | Water treatment tablets in stock |
+| `POST /api/health/orders` | `POST /orders` (`productId`, `quantity`, `customerName`) | Order button; "Your treatment orders" |
+| `GET /api/health/orders?customerId=…` | Maji's own `health_orders` table (copy of each order SafeMeds accepted) | Your treatment orders |
 
 Code: `server/routes/health.js` (server) and `src/Pages/customer/HealthJournal.jsx` (page).
 
