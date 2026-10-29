@@ -1,3 +1,4 @@
+ process.env.API_KEYS = "skillsbridge:test-key-123"
 jest.mock("../server/db", () => ({
   query: jest.fn()
 }));
@@ -5,6 +6,7 @@ jest.mock("../server/db", () => ({
 const request = require("supertest");
 const db = require("../server/db");
 const app = require("../server/app");
+const authGet = (url) => request(app).get(url).set("X-API-Key", "test-key-123");
 
 describe("vendor endpoints", () => {
   beforeEach(() => {
@@ -26,7 +28,7 @@ describe("vendor endpoints", () => {
         }
       ], []]);
 
-      const response = await request(app).get("/api/vendors/top-rated");
+      const response = await authGet("/api/vendors/top-rated");
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual([{
@@ -47,7 +49,7 @@ describe("vendor endpoints", () => {
     it("returns an empty array when no vendors qualify", async () => {
       db.query.mockResolvedValueOnce([[], []]);
 
-      const response = await request(app).get("/api/vendors/top-rated");
+      const response = await authGet("/api/vendors/top-rated");
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual([]);
@@ -60,7 +62,7 @@ describe("vendor endpoints", () => {
         { vendorId: 7, businessName: "Maji Fresh", estate: "Kasarani" }
       ], []]);
 
-      const response = await request(app).get("/api/vendors/locations");
+      const response = await authGet("/api/vendors/locations");
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual([
@@ -74,7 +76,7 @@ describe("vendor endpoints", () => {
     it("returns an empty array when no vendors exist", async () => {
       db.query.mockResolvedValueOnce([[], []]);
 
-      const response = await request(app).get("/api/vendors/locations");
+      const response = await authGet("/api/vendors/locations");
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual([]);
@@ -210,7 +212,7 @@ describe("GET /api/vendors/all", () => {
       }
     ], []]);
 
-    const response = await request(app).get("/api/vendors/all");
+    const response = await authGet("/api/vendors/all");
 
     expect(response.status).toBe(200);
     expect(response.body).toEqual([{
@@ -228,14 +230,14 @@ describe("GET /api/vendors/all", () => {
   it("filters by estate with a parameterized query", async () => {
     db.query.mockResolvedValueOnce([[], []]);
 
-    const response = await request(app).get("/api/vendors/all?estate=Kasarani");
+    const response = await authGet("/api/vendors/all?estate=Kasarani");
 
     expect(response.status).toBe(200);
     expect(db.query.mock.calls[0][1]).toEqual(["Kasarani"]);
   });
 
   it("rejects an empty estate with 400", async () => {
-    const response = await request(app).get("/api/vendors/all?estate=");
+    const response = await authGet("/api/vendors/all?estate=");
 
     expect(response.status).toBe(400);
     expect(db.query).not.toHaveBeenCalled();

@@ -30,7 +30,14 @@ You should get a JSON array of 50 vendors, starting with:
 
 ## Authentication
 
-None. All four endpoints are public and need no API key, token or headers. *(Placeholder: authentication will be added in Week 9.)*
+Every endpoint needs an API key, sent in the X-API-Key header. Ask the Maji team for yours.
+curl -H "X-API-Key: YOUR_API_KEY" https://maji-api-onrender-com.onrender.com/api/vendors/locations
+| Situation | Status | Body |
+|---|---|---|
+| Key missing or wrong | 401 | { "error": "Missing or invalid API key" } |
+| More than 100 requests per minute | 429 | { "error": "Too many requests", "retryAfterSeconds": 42 } |
+A 429 also carries a Retry-After header (seconds to wait). 
+Limit: 100 requests per minute per key
 
 ## Endpoints
 

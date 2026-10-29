@@ -92,5 +92,9 @@ To fill in during the lab: anything SkillsBridge reported, what we found in our 
 | | | | | |
 
 Known before the lab:
-- Our API has **no API key check** (Week 9 not implemented). SkillsBridge calls it without a key.
 - Our CORS only allows `http://localhost:5173`, so SkillsBridge should call us from their server, not their browser.
+
+Update after Week 9:
+- Our five partner endpoints (`/orders/active/estates`, `/orders/active/schedules`, `/vendors/top-rated`, `/vendors/locations`, `/vendors/all`) now require an API key sent in the `X-API-Key` header. A missing or wrong key returns 401.
+- Each consumer has its own key. SkillsBridge's key was sent to them privately.
+- Rate limit: 100 requests per minute per key. Above that, the API returns 429 with a `Retry-After` header.

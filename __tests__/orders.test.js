@@ -1,3 +1,4 @@
+process.env.API_KEYS = "skillsbridge:test-key-123"
 jest.mock("../server/db", () => ({
   query: jest.fn()
 }));
@@ -5,6 +6,7 @@ jest.mock("../server/db", () => ({
 const request = require("supertest");
 const db = require("../server/db");
 const app = require("../server/app");
+const authGet = (url) => request(app).get(url).set("X-API-Key", "test-key-123");
 
 describe("order and active delivery endpoints", () => {
   beforeEach(() => {
@@ -15,7 +17,7 @@ describe("order and active delivery endpoints", () => {
     it("returns active estates with the contracted response shape", async () => {
       db.query.mockResolvedValueOnce([[{ estate: "Kasarani" }], []]);
 
-      const response = await request(app).get("/api/orders/active/estates");
+      const response = await authGet("/api/orders/active/estates");
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual([{ estate: "Kasarani" }]);
@@ -25,7 +27,7 @@ describe("order and active delivery endpoints", () => {
     it("returns an empty array when there are no active estates", async () => {
       db.query.mockResolvedValueOnce([[], []]);
 
-      const response = await request(app).get("/api/orders/active/estates");
+      const response = await authGet("/api/orders/active/estates");
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual([]);
@@ -38,7 +40,7 @@ describe("order and active delivery endpoints", () => {
         { estate: "Kasarani", deliveryTime: "14:00" }
       ], []]);
 
-      const response = await request(app).get("/api/orders/active/schedules");
+      const response = await authGet("/api/orders/active/schedules");
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual([
@@ -51,7 +53,7 @@ describe("order and active delivery endpoints", () => {
     it("returns an empty array when there are no active schedules", async () => {
       db.query.mockResolvedValueOnce([[], []]);
 
-      const response = await request(app).get("/api/orders/active/schedules");
+      const response = await authGet("/api/orders/active/schedules");
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual([]);

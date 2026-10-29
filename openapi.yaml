@@ -6,13 +6,16 @@ info:
   description: >
     Read-only API exposed by Maji so that SkillsBridge can read estates with
     active orders, active delivery schedules, top-rated vendors and vendor
-    locations. No authentication is required. All endpoints return JSON arrays.
+    locations. Every request needs an API key in the X-API-Key header. All endpoints return JSON arrays.
 
 servers:
   - url: https://maji-api-onrender-com.onrender.com/api
     description: Live deployment (Render free tier; first request after ~15 min idle can take up to a minute)
   - url: http://localhost:3001/api
     description: Local development
+
+security:
+  - ApiKeyAuth: []
 
 tags:
   - name: SkillsBridge
@@ -45,6 +48,11 @@ paths:
                       example: Lang'ata
         '500':
           $ref: '#/components/responses/ServerError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+
 
   /orders/active/schedules:
     get:
@@ -76,6 +84,10 @@ paths:
                       example: Afternoon (12pm - 6pm)
         '500':
           $ref: '#/components/responses/ServerError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
 
   /vendors/top-rated:
     get:
@@ -131,6 +143,10 @@ paths:
                       example: "0718045704"
         '500':
           $ref: '#/components/responses/ServerError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
 
   /vendors/locations:
     get:
@@ -191,6 +207,10 @@ paths:
                     example: estate must be a non-empty string
         '500':
           $ref: '#/components/responses/ServerError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
 
   /vendors/all:
     get:
@@ -268,9 +288,40 @@ paths:
                     example: estate must be a non-empty string
         '500':
           $ref: '#/components/responses/ServerError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
 
 components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+
   responses:
+    Unauthorized:
+      description: API key missing or invalid.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error: { type: string, example: Missing or invalid API key }
+    TooManyRequests:
+      description: Rate limit exceeded (100 requests per minute per key).
+      headers:
+        Retry-After:
+          description: Seconds to wait before trying again.
+          schema: { type: integer }
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error: { type: string, example: Too many requests }
+              retryAfterSeconds: { type: integer, example: 42 }
     ServerError:
       description: The server could not read from the database.
       content:

@@ -1,10 +1,11 @@
 const express = require("express");
 const db = require("./db");
-
+const { requireApiKey, rateLimit } = require("./middleware/security"); // Key check first, then the limiter, so anonymous callers cannot use up a real consumer's allowance. 
+const partnerOnly = [  requireApiKey,  rateLimit({ windowMs: 60 * 1000, max: Number(process.env.RATE_LIMIT_MAX) || 100 }), ];
 const router = express.Router();
 //SkillBridge api
 //api to get estates with active orders.
-router.get("/orders/active/estates", async (req, res) => {
+router.get("/orders/active/estates", partnerOnly, async (req, res) => {
     try {
         const [rows] = await db.query(`
             SELECT DISTINCT estate
@@ -28,7 +29,7 @@ router.get("/orders/active/estates", async (req, res) => {
 });
 
 //api to get estates with their delivery hours
-router.get("/orders/active/schedules", async (req, res) => {
+router.get("/orders/active/schedules", partnerOnly, async (req, res) => {
     try {
         const [rows] = await db.query(`
             SELECT DISTINCT
@@ -56,7 +57,7 @@ router.get("/orders/active/schedules", async (req, res) => {
 });
 
 //api to get the top rated vendor per estate
-router.get("/vendors/top-rated", async (req, res) => {
+router.get("/vendors/top-rated", partnerOnly, async (req, res) => {
     try {
         const [rows] = await db.query(`
             SELECT
@@ -146,7 +147,7 @@ router.get("/vendors/locations", async (req, res) => {
 });
 
 //api to get every vendor with contact details (optional estate filter)
-router.get("/vendors/all", async (req, res) => {
+router.get("/vendors/all", partnerOnly, async (req, res) => {
     const { estate } = req.query;
 
     if (estate !== undefined && (typeof estate !== "string" || !estate.trim())) {
