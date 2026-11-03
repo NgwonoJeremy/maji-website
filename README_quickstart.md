@@ -1,6 +1,6 @@
 # Maji Platform API: Quickstart
 
-The quickstart, endpoint examples, error reference and local setup steps are now in the main [README.md](README.md).
+The quickstart, endpoint examples, error reference and local setup steps are now in the [docs/API_REFERENCE.md](docs/API_REFERENCE.md).
 
 Fastest check that the API is up:
 

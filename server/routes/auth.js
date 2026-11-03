@@ -5,69 +5,75 @@ const db=require("../db");
 const router=express.Router();
 
 //regsiter page
-router.post("/register",async(req,res)=> {
-    const{
+router.post("/register", async (req, res) => {
+    const {
       name,
       email,
       phone,
       password,
       role,
       businessName,
-      dailyCapacity,
-      estatesServed,
-    }=req.body;
+      estate,
+    } = req.body;
+
     if (!name || !email || !password || !role) {
-     return res.status(400).json({ message: "All fields are required" });
-  }
-  try {
-    const[existing]=await db.query(
-        "SELECT id FROM customers WHERE email=?",
-        [email]
-    );
-    if(existing.length>0) {
-        return res.status(400).json({message:"Email already registered"});
+      return res.status(400).json({ message: "All fields are required" });
     }
 
-    const hashedpassword = await bcrypt.hash(password,10);
-    const [result] = await db.query(
-        `INSERT INTO customers (name,email,password,phone,role)
-        VALUES (?,?,?,?,?)`,
-        [name,email,hashedpassword,phone,role]
-    );
-
-    const newId = result.insertId;
-    if (role === "vendor") {
-        await db.query(
-            `INSERT INTO vendors
-            (user_id, business_name, daily_capacity,estates_served)
-            VALUES (?,?,?,?,?)`,
-            [
-                newId,
-                businessName || null,
-                dailyCapacity || null,
-                estatesServed || null,
-            ]
-        );
+    if (role === "vendor" &&
+        (typeof businessName !== "string" || !businessName.trim() ||
+         typeof estate !== "string" || !estate.trim())) {
+      return res.status(400).json({
+        message: "Business name and estate are required for vendors"
+      });
     }
-    const token=jwt.sign(
-        {id:newId,role:role},
-        process.env.JWT_SECRET,
-        {expiresIn: "7d"}
-    );
 
-    res.status(201).json({
-        token,
-        user: {
-            id:newId,
-            name: name,
-            email:email,
-            role:role,
+    try {
+      const [existing] = await db.query(
+          "SELECT id FROM customers WHERE email=?",
+          [email]
+      );
+      if (existing.length > 0) {
+        return res.status(400).json({ message: "Email already registered" });
+      }
+
+      const hashedpassword = await bcrypt.hash(password, 10);
+      const [result] = await db.query(
+          `INSERT INTO customers (name,email,password,phone,role)
+          VALUES (?,?,?,?,?)`,
+          [name, email, hashedpassword, phone, role]
+      );
+
+      const newId = result.insertId;
+
+      if (role === "vendor") {
+        try {
+          await db.query(
+              `INSERT INTO vendors (user_id, business_name, estate)
+              VALUES (?,?,?)`,
+              [newId, businessName.trim(), estate.trim()]
+          );
+        } catch (vendorErr) {
+          // Don't leave a vendor account with no vendor record behind
+          await db.query("DELETE FROM customers WHERE id = ?", [newId]);
+          throw vendorErr;
         }
-    });
-  } catch(err) {
-    console.error ("Register error:",err);
-    res.status(500).json({message:"Registration failed"});
-  }
+      }
+
+      const token = jwt.sign(
+          { id: newId, role: role },
+          process.env.JWT_SECRET,
+          { expiresIn: "7d" }
+      );
+
+      res.status(201).json({
+          token,
+          user: { id: newId, name: name, email: email, role: role }
+      });
+    } catch (err) {
+      console.error("Register error:", err);
+      res.status(500).json({ message: "Registration failed" });
+    }
 });
 
 //login page

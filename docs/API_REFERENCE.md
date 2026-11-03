@@ -1,4 +1,6 @@
-# Maji Platform API
+# Maji Platform API: full reference
+
+> This is the full reference for API consumers (SkillsBridge and others). For an overview of the whole project, see the [main README](../README.md).
 
 ## Overview
 
@@ -6,17 +8,17 @@ Maji is a Kenyan water delivery platform that connects customers with water vend
 
 - **Base URL:** `https://maji-api-onrender-com.onrender.com/api`
 - **Rendered API docs:** [View the docs (Redoc)](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/NgwonoJeremy/maji-website/main/openapi.yaml)
-- **Contract:** [`openapi.yaml`](openapi.yaml)
+- **Contract:** [`openapi.yaml`](../openapi.yaml)
 - All five endpoints are `GET` and return a JSON array. Only `/vendors/locations` and `/vendors/all` take a parameter: an optional `estate` filter.
 
 > **First request may be slow.** The API runs on Render's free tier, which sleeps after about 15 minutes without traffic. The first request after that can take up to a minute while the server wakes up. Later requests are fast.
 
 ## Quickstart
 
-Paste this into a browser, or run it in a terminal:
+Run this in a terminal. A browser cannot send the key header, so use `curl` or a tool like Postman:
 
 ```bash
-curl https://maji-api-onrender-com.onrender.com/api/vendors/locations
+curl -H "X-API-Key: YOUR_API_KEY" https://maji-api-onrender-com.onrender.com/api/vendors/locations
 ```
 
 You should get a JSON array of 50 vendors, starting with:
@@ -30,14 +32,18 @@ You should get a JSON array of 50 vendors, starting with:
 
 ## Authentication
 
-Every endpoint needs an API key, sent in the X-API-Key header. Ask the Maji team for yours.
+Every endpoint needs an API key, sent in the `X-API-Key` header. Ask the Maji team for yours.
+
+```bash
 curl -H "X-API-Key: YOUR_API_KEY" https://maji-api-onrender-com.onrender.com/api/vendors/locations
+```
+
 | Situation | Status | Body |
 |---|---|---|
-| Key missing or wrong | 401 | { "error": "Missing or invalid API key" } |
-| More than 100 requests per minute | 429 | { "error": "Too many requests", "retryAfterSeconds": 42 } |
-A 429 also carries a Retry-After header (seconds to wait). 
-Limit: 100 requests per minute per key
+| Key missing or wrong | 401 | `{ "error": "Missing or invalid API key" }` |
+| More than 100 requests per minute | 429 | `{ "error": "Too many requests", "retryAfterSeconds": 42 }` |
+
+A 429 also carries a `Retry-After` header (seconds to wait). The limit is 100 requests per minute per key.
 
 ## Endpoints
 
@@ -50,7 +56,7 @@ The responses below are real output from the live API, shortened to the first it
 Each estate that has at least one order with status `pending`, `accepted` or `on the way`. Each estate appears once.
 
 ```bash
-curl https://maji-api-onrender-com.onrender.com/api/orders/active/estates
+curl -H "X-API-Key: YOUR_API_KEY" https://maji-api-onrender-com.onrender.com/api/orders/active/estates
 ```
 
 Response `200` (first 2 of 23):
@@ -73,7 +79,7 @@ Response `200` (first 2 of 23):
 Each distinct estate and delivery window among active orders. An estate can appear more than once if it has orders in different windows.
 
 ```bash
-curl https://maji-api-onrender-com.onrender.com/api/orders/active/schedules
+curl -H "X-API-Key: YOUR_API_KEY" https://maji-api-onrender-com.onrender.com/api/orders/active/schedules
 ```
 
 Response `200` (first 2 of 24):
@@ -97,7 +103,7 @@ Response `200` (first 2 of 24):
 The highest-rated **verified** vendor in each estate. If two vendors in an estate share the top rating, both are returned.
 
 ```bash
-curl https://maji-api-onrender-com.onrender.com/api/vendors/top-rated
+curl -H "X-API-Key: YOUR_API_KEY" https://maji-api-onrender-com.onrender.com/api/vendors/top-rated
 ```
 
 Response `200` (first 2 of 18):
@@ -151,7 +157,7 @@ Every vendor's station (business) name and primary estate. Add the optional `est
 **All vendors:**
 
 ```bash
-curl https://maji-api-onrender-com.onrender.com/api/vendors/locations
+curl -H "X-API-Key: YOUR_API_KEY" https://maji-api-onrender-com.onrender.com/api/vendors/locations
 ```
 
 Response `200` (first 2 of 50):
@@ -172,7 +178,7 @@ Response `200` (first 2 of 50):
 **Vendors in one estate:**
 
 ```bash
-curl "https://maji-api-onrender-com.onrender.com/api/vendors/locations?estate=Kasarani"
+curl -H "X-API-Key: YOUR_API_KEY" "https://maji-api-onrender-com.onrender.com/api/vendors/locations?estate=Kasarani"
 ```
 
 Response `200`:
@@ -195,8 +201,8 @@ Response `200`:
 Every vendor with business name, estate, rating, status and owner contact details, ordered by estate then rating (highest first). Add the optional `estate` parameter to get only the vendors in one estate.
 
 ```bash
-curl https://maji-api-onrender-com.onrender.com/api/vendors/all
-curl "https://maji-api-onrender-com.onrender.com/api/vendors/all?estate=Kasarani"
+curl -H "X-API-Key: YOUR_API_KEY" https://maji-api-onrender-com.onrender.com/api/vendors/all
+curl -H "X-API-Key: YOUR_API_KEY" "https://maji-api-onrender-com.onrender.com/api/vendors/all?estate=Kasarani"
 ```
 
 | Field | Type | Required | Notes |
@@ -254,7 +260,7 @@ npm install
 
 **2. Create the database**
 
-Create an empty database (for example `maji_platform`) in phpMyAdmin. Open its **SQL** tab, paste the full contents of [`db/railway_setup.sql`](db/railway_setup.sql) and click **Go**. This creates the tables and loads 100 customers, 50 vendors and 50 orders. The last query prints the counts, which should be `100, 50, 50, 25`.
+Create an empty database (for example `maji_platform`) in phpMyAdmin. Open its **SQL** tab, paste the full contents of [`db/railway_setup.sql`](../db/railway_setup.sql) and click **Go**. This creates the tables and loads 100 customers, 50 vendors and 50 orders. The last query prints the counts, which should be `100, 50, 50, 25`.
 
 Run it **once** on an empty database. Running it again duplicates vendors and orders.
 
@@ -288,7 +294,7 @@ Connected to MySQL — maji_platform
 **5. Try it**
 
 ```bash
-curl http://localhost:3001/api/vendors/locations
+curl -H "X-API-Key: YOUR_API_KEY" http://localhost:3001/api/vendors/locations
 ```
 
 ## About the web app

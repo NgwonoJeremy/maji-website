@@ -13,7 +13,6 @@ const VendorRegister = () => {
     ownerName: '',
     phone: '',
     estateCoverage: 'Greenwood Estates',
-    capacityLiters: '',
     agreedToTerms: false
   });
 
@@ -89,19 +88,6 @@ const VendorRegister = () => {
     if (!PHONE_REGEX.test(phoneNormalized)) {
       newErrors.phone = 'Enter a valid Kenyan phone number, e.g. 0712345678 or +254712345678.';
     }
-
-    const capacity = Number(formData.capacityLiters);
-    if (
-      formData.capacityLiters === '' ||
-      Number.isNaN(capacity) ||
-      !Number.isFinite(capacity) ||
-      capacity <= 0 ||
-      capacity > 1000000 ||
-      !Number.isInteger(capacity)
-    ) {
-      newErrors.capacityLiters = 'Enter a realistic whole number of liters (1 - 1,000,000).';
-    }
-
     if (!formData.estateCoverage || formData.estateCoverage.trim().length < 3) {
       newErrors.estateCoverage = 'Please select or add a valid estate.';
     }
@@ -125,7 +111,6 @@ const VendorRegister = () => {
       ownerName: formData.ownerName,
       phone: formData.phone,
       estateCoverage: formData.estateCoverage,
-      capacityLiters: formData.capacityLiters
     }));
 
     // Simulate backend onboarding process response
@@ -259,19 +244,6 @@ const VendorRegister = () => {
                 </div>
               )}
               {errors.estateCoverage && <p className="vr-error-text">{errors.estateCoverage}</p>}
-            </div>
-
-            <div className="vr-form-group">
-              <label className="vr-label">Daily Capacity (Liters) *</label>
-              <input
-                type="number"
-                name="capacityLiters"
-                placeholder="e.g., 2000"
-                value={formData.capacityLiters}
-                onChange={handleChange}
-                className="vr-input"
-              />
-              {errors.capacityLiters && <p className="vr-error-text">{errors.capacityLiters}</p>}
             </div>
           </div>
 
