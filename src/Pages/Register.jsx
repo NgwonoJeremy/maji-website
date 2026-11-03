@@ -30,9 +30,6 @@ const validate = (role, fields) => {
     if (!fields.businessName.trim()) {
       errors.businessName = "Business/station name is required";
     }
-    if (!fields.dailyCapacity || Number(fields.dailyCapacity) <= 0) {
-      errors.dailyCapacity = "Enter a valid daily capacity";
-    }
     if (!fields.targetEstates.trim()) {
       errors.targetEstates = "Enter the estate you want to serve";
     }
@@ -50,7 +47,6 @@ function Register() {
     phone: "",
     password: "",
     businessName: "",
-    dailyCapacity: "",
     targetEstates:"",
   });
   const [errors, setErrors] = useState({});
@@ -88,8 +84,7 @@ function Register() {
           password: formData.password,
           role: role,
           businessName:formData.businessName,
-          dailycapacity: Number(formData.dailyCapacity),
-          estatesServed: formData.targetEstates,
+          estate: formData.targetEstates,
         }),
       });
       const data = await response.json();
@@ -219,35 +214,12 @@ function Register() {
                   {errors.businessName && <span className="error-message">{errors.businessName}</span>}
                 </div>
 
-                <div className="input-group">
-                  <label htmlFor="dailyCapacity">Daily capacity (Liters)</label>
-                  <input
-                    id="dailyCapacity"
-                    name="dailyCapacity"
-                    type="number"
-                    placeholder="2000"
-                    value={formData.dailyCapacity}
-                    onChange={handleChange}
-                  />
-                  {errors.dailyCapacity && <span className="error-message">{errors.dailyCapacity}</span>}
-                </div>
-
                 <div>
-                  <label htmlFor="targetEstates">Estate / Area you serve</label>
-                  <input
-                    id="targetEstates"
-                    name="targetEstates"
-                    type="text"
-                    placeholder="e.g. Kasarani, Rongai, Kahawa"
-                    value={formData.targetEstates}
-                    onChange={handleChange}
-                  />
-                  <span className="field-hint">
-                    You can list multiple areas separated by commas.
-                  </span>
-                  {errors.targetEstates && (
-                    <span className="error-message">{errors.targetEstates}</span>
-                  )}
+                  <label htmlFor="targetEstates">Estate you serve</label>
+                  <input id="targetEstates" name="targetEstates" type="text"
+                    placeholder="e.g. Kasarani" value={formData.targetEstates}
+                    onChange={handleChange} />
+                  {errors.targetEstates && <span className="error-message">{errors.targetEstates}</span>}
                 </div>
               </div>
             )}

@@ -341,8 +341,6 @@ router.put("/vendors/:id", async (req, res) => {
 
         const {
             businessName,
-            dailyCapacity,
-            estatesServed,
             estate,
             isOnline
         } = req.body;
@@ -371,15 +369,11 @@ router.put("/vendors/:id", async (req, res) => {
         await db.query(
             `UPDATE vendors
              SET business_name = ?,
-                 daily_capacity = ?,
-                 estates_served = ?,
                  estate = ?,
                  is_online = ?
              WHERE id = ?`,
             [
                 businessName,
-                dailyCapacity || null,
-                estatesServed || null,
                 estate,
                 isOnline ?? false,
                 id
@@ -390,8 +384,6 @@ router.put("/vendors/:id", async (req, res) => {
             `SELECT
                 id AS vendorId,
                 business_name AS businessName,
-                daily_capacity AS dailyCapacity,
-                estates_served AS estatesServed,
                 estate,
                 is_online AS isOnline
              FROM vendors
