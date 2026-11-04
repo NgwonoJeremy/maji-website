@@ -1,14 +1,20 @@
 // Health Journal routes: Maji's server calls the SafeMeds API (our upstream partner)
 // and passes back only the fields the Health Journal page needs.
 // The browser never talks to SafeMeds directly, so the SafeMeds key stays on the server.
+//
+// Week 11: every SafeMeds call now has a timeout and limited retries (resilientFetch.js),
+// and the three list routes fall back to the last good response when SafeMeds fails.
 const express = require("express");
 const db = require("../db");
+const { fetchWithRetry } = require("../resilientFetch");
 const router = express.Router();
 
 const SAFEMEDS_URL = process.env.SAFEMEDS_URL;         // SafeMeds base URL, set in .env
 const SAFEMEDS_API_KEY = process.env.SAFEMEDS_API_KEY; // SafeMeds key, set in .env, never committed
 
 // Sends one request to SafeMeds and returns the raw fetch Response.
+// GETs get 1.5 s per try and up to 2 retries. fetchWithRetry never retries writes,
+// and writes get a longer timeout so a slow but successful order is not cut off.
 async function safeMedsFetch(path, options = {}) {
   if (!SAFEMEDS_URL) {
     throw new Error("SAFEMEDS_URL is not set in .env");
@@ -17,7 +23,13 @@ async function safeMedsFetch(path, options = {}) {
   const headers = { ...(options.headers || {}) };
   if (SAFEMEDS_API_KEY) headers["X-API-Key"] = SAFEMEDS_API_KEY;
 
-  return fetch(`${SAFEMEDS_URL}${path}`, { ...options, headers });
+  const isGet = !options.method || options.method.toUpperCase() === "GET";
+
+  return fetchWithRetry(
+    `${SAFEMEDS_URL}${path}`,
+    { ...options, headers },
+    { timeoutMs: isGet ? 1500 : 5000, retries: 2, delayMs: 200 }
+  );
 }
 
 // GETs one SafeMeds list endpoint. Returns the parsed JSON array,
@@ -38,10 +50,38 @@ async function getList(path) {
   return data;
 }
 
-// Sends a safe fallback response when SafeMeds can't be used.
+// A short, useful reason for the log (never a key).
+function failureReason(err) {
+  return err.name === "TimeoutError" ? "timeout" : (err.cause?.code || err.message);
+}
+
+// Last good response for each SafeMeds path, kept in memory (lost when the server restarts).
+const lastGood = new Map(); // path -> { data, asOf }
+
+// Fetches a list, reshapes it, and sends { data, stale, asOf }.
+// If SafeMeds fails and a saved copy exists, sends that with stale: true.
+// If nothing is saved, sends the 502 "Partner data unavailable" message.
+async function sendList(res, what, path, shape) {
+  try {
+    const data = (await getList(path)).map(shape);
+    const asOf = new Date().toISOString();
+    lastGood.set(path, { data, asOf });
+    return res.json({ data, stale: false, asOf });
+  } catch (err) {
+    console.error(`SafeMeds ${what} failed:`, failureReason(err));
+    const saved = lastGood.get(path);
+    if (saved) {
+      return res.json({ data: saved.data, stale: true, asOf: saved.asOf });
+    }
+    return res.status(502).json({ message: "Partner data unavailable" });
+  }
+}
+
+// Sends a safe fallback response when SafeMeds can't be used (used by the order route,
+// which has nothing to show from a saved copy).
 // Logs the reason (never a key), and tells the page with a 502.
 function partnerUnavailable(res, what, err) {
-  console.error(`SafeMeds ${what} failed:`, err.cause?.code || err.message);
+  console.error(`SafeMeds ${what} failed:`, failureReason(err));
   res.status(502).json({ message: "Partner data unavailable" });
 }
 
@@ -59,66 +99,45 @@ router.get("/alerts", async (req, res) => {
     .toISOString()
     .slice(0, 10); // YYYY-MM-DD, as SafeMeds expects
 
-  try {
-    const alerts = await getList(
-      `/v1/health-signals/area-alerts?region=${encodeURIComponent(estate.trim())}&since=${since}`
-    );
-
-    // SafeMeds sends aggregate counts and no severity, so the page shows the
-    // illness, the date and how far above normal the prescriptions were.
-    res.json(
-      alerts.map((alert) => ({
-        alertId: `${alert.illnessCategory}-${alert.alertDate}`,
-        illnessType: alert.illnessCategory,
-        detectedAt: alert.alertDate,
-        prescriptionCount: alert.prescriptionCount,
-        spikeRatio: alert.spikeRatio,
-        signalMode: alert.signalMode,
-      }))
-    );
-  } catch (err) {
-    partnerUnavailable(res, "alerts", err);
-  }
+  // SafeMeds sends aggregate counts and no severity, so the page shows the
+  // illness, the date and how far above normal the prescriptions were.
+  return sendList(
+    res,
+    "alerts",
+    `/v1/health-signals/area-alerts?region=${encodeURIComponent(estate.trim())}&since=${since}`,
+    (alert) => ({
+      alertId: `${alert.illnessCategory}-${alert.alertDate}`,
+      illnessType: alert.illnessCategory,
+      detectedAt: alert.alertDate,
+      prescriptionCount: alert.prescriptionCount,
+      spikeRatio: alert.spikeRatio,
+      signalMode: alert.signalMode,
+    })
+  );
 });
 
 // GET /api/health/products
 // Top-rated water-treatment products (SafeMeds returns the top 3).
-router.get("/products", async (req, res) => {
-  try {
-    const products = await getList("/reviews");
-
-    res.json(
-      products.map((product) => ({
-        productId: product.productId,
-        productName: product.productName,
-        averageRating: product.averageRating,
-        reviewCount: product.reviewCount,
-        topComment: product.topComment,
-      }))
-    );
-  } catch (err) {
-    partnerUnavailable(res, "products", err);
-  }
-});
+router.get("/products", (req, res) =>
+  sendList(res, "products", "/reviews", (product) => ({
+    productId: product.productId,
+    productName: product.productName,
+    averageRating: product.averageRating,
+    reviewCount: product.reviewCount,
+    topComment: product.topComment,
+  }))
+);
 
 // GET /api/health/stock
 // Water-treatment tablets currently in stock at SafeMeds.
-router.get("/stock", async (req, res) => {
-  try {
-    const items = await getList("/inventory?available=true");
-
-    res.json(
-      items.map((item) => ({
-        productId: item.productId,
-        productName: item.productName,
-        availableQuantity: item.availableQuantity,
-        isAvailable: item.isAvailable,
-      }))
-    );
-  } catch (err) {
-    partnerUnavailable(res, "stock", err);
-  }
-});
+router.get("/stock", (req, res) =>
+  sendList(res, "stock", "/inventory?available=true", (item) => ({
+    productId: item.productId,
+    productName: item.productName,
+    availableQuantity: item.availableQuantity,
+    isAvailable: item.isAvailable,
+  }))
+);
 
 // POST /api/health/orders
 // Body: { customerId, productId, productName, quantity }
