@@ -19,6 +19,7 @@ function requireApiKey(req, res, next) {
   }
 
   req.consumer = consumer;   // who is calling; used by the rate limiter
+  req.apiKey = key;          // valid key only; monitoring hashes it, never logs it
   next();
 }
 

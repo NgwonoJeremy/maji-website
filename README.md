@@ -240,6 +240,32 @@ The `error` text for each endpoint:
 
 If you get a `404` HTML page, check the path spelling and that it starts with `/api`.
 
+## Monitoring: `/stats`
+
+`GET /stats` (also available as `GET /api/stats`) returns running totals for this API since the server started. It needs an `X-API-Key` header, like the other partner endpoints; without one it returns `401`. Numbers are kept in memory and reset on restart.
+
+```
+curl -s -H "X-API-Key: <your-api-key>" https://maji-api-onrender-com.onrender.com/stats
+```
+
+```json
+{
+  "startedAt": "2026-11-04T12:00:00.000Z",
+  "uptimeSeconds": 3600,
+  "total": 48,
+  "clientErrors": 5,
+  "serverErrors": 0,
+  "errorRatePercent": 0,
+  "avgMs": 4.1,
+  "routes": {
+    "GET /api/vendors/all": { "count": 20, "clientErrors": 0, "serverErrors": 0, "avgMs": 6.3, "maxMs": 31.2 },
+    "(no route)": { "count": 5, "clientErrors": 5, "serverErrors": 0, "avgMs": 0.4, "maxMs": 0.9 }
+  }
+}
+```
+
+`errorRatePercent` counts server errors (5xx) only. `(no route)` holds requests rejected before reaching a route (401, 429) and unknown paths (404). Each request is also logged as one JSON line (`time`, `method`, `path`, `status`, `ms`, `caller`); the key, query strings and bodies are never logged. See [MONITORING_NOTES.md](MONITORING_NOTES.md).
+
 ## Run the API locally
 
 Requires [Node.js](https://nodejs.org/) and a MySQL or MariaDB database (for example, XAMPP).
