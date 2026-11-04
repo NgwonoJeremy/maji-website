@@ -67,6 +67,19 @@
   flex-shrink: 0;
 }
 
+/* Saved-data banner: SafeMeds could not be reached, so this is the last copy Maji kept */
+.journal-notice-stale {
+  border-color: rgba(255, 193, 7, 0.35);
+  background: rgba(255, 193, 7, 0.08);
+  margin-bottom: 1rem;
+}
+
+.journal-notice-stale-icon {
+  color: #ffc107;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
 /* Rows inside the existing .history-item cards */
 .journal-panel .history-item {
   align-items: center;

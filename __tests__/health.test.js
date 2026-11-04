@@ -1,5 +1,6 @@
 process.env.SAFEMEDS_URL = "http://safemeds.test";
 process.env.SAFEMEDS_API_KEY = "sm-test-key";
+process.env.SAFEMEDS_RETRY_DELAY_MS = "1"; // keep the retry waits short in tests
 
 jest.mock("../server/db", () => ({
   query: jest.fn()
@@ -8,6 +9,7 @@ jest.mock("../server/db", () => ({
 const request = require("supertest");
 const db = require("../server/db");
 const app = require("../server/app");
+const healthRouter = require("../server/routes/health");
 
 // A minimal stand-in for fetch's Response.
 const reply = (status, body) => ({
@@ -19,6 +21,7 @@ const reply = (status, body) => ({
 describe("Health Journal routes (SafeMeds Service 2)", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    healthRouter.clearSaved(); // start every case with nothing saved
     global.fetch = jest.fn();
     jest.spyOn(console, "error").mockImplementation(() => {});
   });
@@ -36,7 +39,8 @@ describe("Health Journal routes (SafeMeds Service 2)", () => {
       const response = await request(app).get("/api/health/stock");
 
       expect(response.status).toBe(200);
-      expect(response.body).toEqual([
+      expect(response.body).toMatchObject({ stale: false });
+      expect(response.body.data).toEqual([
         { productId: 8, productName: "Chlorine", availableQuantity: 300, isAvailable: true }
       ]);
       expect(global.fetch.mock.calls[0][0]).toBe("http://safemeds.test/inventory?available=true");
@@ -62,18 +66,20 @@ describe("Health Journal routes (SafeMeds Service 2)", () => {
       const response = await request(app).get("/api/health/products");
 
       expect(response.status).toBe(200);
-      expect(response.body).toEqual([
+      expect(response.body.stale).toBe(false);
+      expect(response.body.data).toEqual([
         { productId: 19, productName: "Aquamira", averageRating: 4.8, reviewCount: 6, topComment: "Clean water" }
       ]);
       expect(global.fetch.mock.calls[0][0]).toBe("http://safemeds.test/reviews");
     });
 
     it("returns 502 when SafeMeds cannot be reached", async () => {
-      global.fetch.mockRejectedValueOnce(new Error("connect ECONNREFUSED"));
+      global.fetch.mockRejectedValue(new Error("connect ECONNREFUSED"));
 
       const response = await request(app).get("/api/health/products");
 
       expect(response.status).toBe(502);
+      expect(global.fetch).toHaveBeenCalledTimes(3); // the first try plus 2 retries
     });
   });
 
@@ -101,7 +107,8 @@ describe("Health Journal routes (SafeMeds Service 2)", () => {
       const response = await request(app).get("/api/health/alerts?estate=Kasarani");
 
       expect(response.status).toBe(200);
-      expect(response.body).toEqual([
+      expect(response.body.stale).toBe(false);
+      expect(response.body.data).toEqual([
         {
           alertId: "Cholera-2026-10-28",
           illnessType: "Cholera",
@@ -121,7 +128,72 @@ describe("Health Journal routes (SafeMeds Service 2)", () => {
       const response = await request(app).get("/api/health/alerts?estate=Kasarani");
 
       expect(response.status).toBe(200);
-      expect(response.body).toEqual([]);
+      expect(response.body.data).toEqual([]);
+      expect(response.body.stale).toBe(false);
+    });
+  });
+
+  describe("when SafeMeds is slow or failing (Week 11)", () => {
+    const stock = [{ productId: 8, productName: "Chlorine", availableQuantity: 300, isAvailable: true }];
+
+    it("retries a failing read and succeeds without the page noticing", async () => {
+      global.fetch
+        .mockResolvedValueOnce(reply(503, { message: "Try again" }))
+        .mockResolvedValueOnce(reply(503, { message: "Try again" }))
+        .mockResolvedValueOnce(reply(200, stock));
+
+      const response = await request(app).get("/api/health/stock");
+
+      expect(response.status).toBe(200);
+      expect(response.body.stale).toBe(false);
+      expect(response.body.data).toEqual(stock);
+      expect(global.fetch).toHaveBeenCalledTimes(3);
+    });
+
+    it("gives up after 2 retries when SafeMeds keeps failing", async () => {
+      global.fetch.mockResolvedValue(reply(500, { message: "Internal error" }));
+
+      const response = await request(app).get("/api/health/stock");
+
+      expect(response.status).toBe(502);
+      expect(global.fetch).toHaveBeenCalledTimes(3);
+    });
+
+    it("does not retry a 401, because asking again changes nothing", async () => {
+      global.fetch.mockResolvedValue(reply(401, { message: "Missing or invalid API key" }));
+
+      const response = await request(app).get("/api/health/stock");
+
+      expect(response.status).toBe(502);
+      expect(global.fetch).toHaveBeenCalledTimes(1);
+    });
+
+    it("serves the last saved copy, flagged stale, when SafeMeds stops answering", async () => {
+      global.fetch.mockResolvedValueOnce(reply(200, stock));
+      const live = await request(app).get("/api/health/stock");
+
+      global.fetch.mockRejectedValue(new Error("connect ECONNREFUSED"));
+      const saved = await request(app).get("/api/health/stock");
+
+      expect(saved.status).toBe(200);
+      expect(saved.body.stale).toBe(true);
+      expect(saved.body.data).toEqual(stock);
+      expect(saved.body.asOf).toBe(live.body.asOf); // the time the copy was saved, not now
+    });
+
+    it("keeps a separate saved copy for each estate's alerts", async () => {
+      global.fetch.mockResolvedValueOnce(reply(200, [
+        { illnessCategory: "Cholera", alertDate: "2026-10-28", prescriptionCount: 9, spikeRatio: 3, signalMode: "demo" }
+      ]));
+      await request(app).get("/api/health/alerts?estate=Kasarani");
+
+      global.fetch.mockRejectedValue(new Error("connect ECONNREFUSED"));
+      const kasarani = await request(app).get("/api/health/alerts?estate=Kasarani");
+      const rongai = await request(app).get("/api/health/alerts?estate=Rongai");
+
+      expect(kasarani.body.stale).toBe(true);
+      expect(kasarani.body.data).toHaveLength(1);
+      expect(rongai.status).toBe(502); // nothing was ever saved for Rongai
     });
   });
 
@@ -195,6 +267,21 @@ describe("Health Journal routes (SafeMeds Service 2)", () => {
 
       expect(response.status).toBe(502);
       expect(db.query).toHaveBeenCalledTimes(1);
+      expect(global.fetch).toHaveBeenCalledTimes(1); // an order is never retried
+    });
+
+    it("tells the customer when SafeMeds times out, and never retries the order", async () => {
+      db.query.mockResolvedValueOnce([[{ name: "Amina Otieno" }], []]);
+      const timeout = new Error("The operation was aborted due to timeout");
+      timeout.name = "TimeoutError";
+      global.fetch.mockRejectedValue(timeout);
+
+      const response = await request(app).post("/api/health/orders").send(order);
+
+      expect(response.status).toBe(504);
+      expect(response.body.message).toContain("cannot confirm your order");
+      expect(global.fetch).toHaveBeenCalledTimes(1);
+      expect(db.query).toHaveBeenCalledTimes(1); // nothing saved in Maji
     });
   });
 

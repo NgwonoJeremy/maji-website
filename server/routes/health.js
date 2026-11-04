@@ -3,12 +3,26 @@
 // The browser never talks to SafeMeds directly, so the SafeMeds key stays on the server.
 const express = require("express");
 const db = require("../db");
+const { fetchWithRetry } = require("../resilientFetch");
 const router = express.Router();
 
 const SAFEMEDS_URL = process.env.SAFEMEDS_URL;         // SafeMeds base URL, set in .env
 const SAFEMEDS_API_KEY = process.env.SAFEMEDS_API_KEY; // SafeMeds key, set in .env, never committed
 
+// How Maji treats a slow or failing SafeMeds (Week 11). By default each attempt gives up
+// after 1.5 s and GET calls are retried twice (200 ms, then 400 ms), so the worst case
+// is 3 x 1500 + 200 + 400 = 5100 ms. Change them in .env without touching the code.
+function envNumber(name, fallback) {
+  const raw = process.env[name];
+  const value = Number(raw);
+  return raw !== undefined && raw !== "" && Number.isFinite(value) && value >= 0 ? value : fallback;
+}
+const TIMEOUT_MS = envNumber("SAFEMEDS_TIMEOUT_MS", 1500) || 1500; // 0 would mean "give up at once"
+const RETRIES = envNumber("SAFEMEDS_RETRIES", 2);
+const RETRY_DELAY_MS = envNumber("SAFEMEDS_RETRY_DELAY_MS", 200);
+
 // Sends one request to SafeMeds and returns the raw fetch Response.
+// Every call has a timeout. Reads (GET) are retried; the order POST never is.
 async function safeMedsFetch(path, options = {}) {
   if (!SAFEMEDS_URL) {
     throw new Error("SAFEMEDS_URL is not set in .env");
@@ -17,7 +31,11 @@ async function safeMedsFetch(path, options = {}) {
   const headers = { ...(options.headers || {}) };
   if (SAFEMEDS_API_KEY) headers["X-API-Key"] = SAFEMEDS_API_KEY;
 
-  return fetch(`${SAFEMEDS_URL}${path}`, { ...options, headers });
+  return fetchWithRetry(
+    `${SAFEMEDS_URL}${path}`,
+    { ...options, headers },
+    { timeoutMs: TIMEOUT_MS, retries: RETRIES, delayMs: RETRY_DELAY_MS }
+  );
 }
 
 // GETs one SafeMeds list endpoint. Returns the parsed JSON array,
@@ -38,11 +56,44 @@ async function getList(path) {
   return data;
 }
 
-// Sends a safe fallback response when SafeMeds can't be used.
-// Logs the reason (never a key), and tells the page with a 502.
+// A short reason for the log. Never includes a key.
+function failureReason(err) {
+  return err.name === "TimeoutError" ? "timeout" : err.cause?.code || err.message;
+}
+
+// Sends a safe fallback response when SafeMeds can't be used and nothing is saved.
+// Logs the reason, and tells the page with a 502.
 function partnerUnavailable(res, what, err) {
-  console.error(`SafeMeds ${what} failed:`, err.cause?.code || err.message);
+  console.error(`SafeMeds ${what} failed:`, failureReason(err));
   res.status(502).json({ message: "Partner data unavailable" });
+}
+
+// The last good answer for each list, kept in memory (lost when the server restarts).
+// The cap stops a flood of different estate names from growing it without limit.
+const MAX_SAVED = 100;
+const lastGood = new Map(); // key -> { data, asOf }
+
+function saveGood(key, data) {
+  const saved = { data, asOf: new Date().toISOString() };
+  lastGood.delete(key); // re-insert so the oldest entry is always first
+  lastGood.set(key, saved);
+  if (lastGood.size > MAX_SAVED) lastGood.delete(lastGood.keys().next().value);
+  return saved;
+}
+
+// Answers with live data when SafeMeds works. When it does not, answers with the last
+// saved copy, flagged stale so the page can say so. With nothing saved, answers 502.
+async function sendWithFallback(res, key, what, load) {
+  try {
+    const saved = saveGood(key, await load());
+    res.json({ data: saved.data, stale: false, asOf: saved.asOf });
+  } catch (err) {
+    const saved = lastGood.get(key);
+    if (!saved) return partnerUnavailable(res, what, err);
+
+    console.error(`SafeMeds ${what} failed (${failureReason(err)}); serving saved data from ${saved.asOf}`);
+    res.json({ data: saved.data, stale: true, asOf: saved.asOf });
+  }
 }
 
 // GET /api/health/alerts?estate=Kasarani
@@ -59,65 +110,53 @@ router.get("/alerts", async (req, res) => {
     .toISOString()
     .slice(0, 10); // YYYY-MM-DD, as SafeMeds expects
 
-  try {
+  await sendWithFallback(res, `alerts:${estate.trim().toLowerCase()}`, "alerts", async () => {
     const alerts = await getList(
       `/v1/health-signals/area-alerts?region=${encodeURIComponent(estate.trim())}&since=${since}`
     );
 
     // SafeMeds sends aggregate counts and no severity, so the page shows the
     // illness, the date and how far above normal the prescriptions were.
-    res.json(
-      alerts.map((alert) => ({
-        alertId: `${alert.illnessCategory}-${alert.alertDate}`,
-        illnessType: alert.illnessCategory,
-        detectedAt: alert.alertDate,
-        prescriptionCount: alert.prescriptionCount,
-        spikeRatio: alert.spikeRatio,
-        signalMode: alert.signalMode,
-      }))
-    );
-  } catch (err) {
-    partnerUnavailable(res, "alerts", err);
-  }
+    return alerts.map((alert) => ({
+      alertId: `${alert.illnessCategory}-${alert.alertDate}`,
+      illnessType: alert.illnessCategory,
+      detectedAt: alert.alertDate,
+      prescriptionCount: alert.prescriptionCount,
+      spikeRatio: alert.spikeRatio,
+      signalMode: alert.signalMode,
+    }));
+  });
 });
 
 // GET /api/health/products
 // Top-rated water-treatment products (SafeMeds returns the top 3).
 router.get("/products", async (req, res) => {
-  try {
+  await sendWithFallback(res, "products", "products", async () => {
     const products = await getList("/reviews");
 
-    res.json(
-      products.map((product) => ({
-        productId: product.productId,
-        productName: product.productName,
-        averageRating: product.averageRating,
-        reviewCount: product.reviewCount,
-        topComment: product.topComment,
-      }))
-    );
-  } catch (err) {
-    partnerUnavailable(res, "products", err);
-  }
+    return products.map((product) => ({
+      productId: product.productId,
+      productName: product.productName,
+      averageRating: product.averageRating,
+      reviewCount: product.reviewCount,
+      topComment: product.topComment,
+    }));
+  });
 });
 
 // GET /api/health/stock
 // Water-treatment tablets currently in stock at SafeMeds.
 router.get("/stock", async (req, res) => {
-  try {
+  await sendWithFallback(res, "stock", "stock", async () => {
     const items = await getList("/inventory?available=true");
 
-    res.json(
-      items.map((item) => ({
-        productId: item.productId,
-        productName: item.productName,
-        availableQuantity: item.availableQuantity,
-        isAvailable: item.isAvailable,
-      }))
-    );
-  } catch (err) {
-    partnerUnavailable(res, "stock", err);
-  }
+    return items.map((item) => ({
+      productId: item.productId,
+      productName: item.productName,
+      availableQuantity: item.availableQuantity,
+      isAvailable: item.isAvailable,
+    }));
+  });
 });
 
 // POST /api/health/orders
@@ -189,6 +228,14 @@ router.post("/orders", async (req, res) => {
       recorded,
     });
   } catch (err) {
+    // A timeout is different from "SafeMeds is down": the order may have reached SafeMeds
+    // even though no answer came back, so it is never retried and the customer is told.
+    if (err.name === "TimeoutError") {
+      console.error("SafeMeds order failed:", failureReason(err));
+      return res.status(504).json({
+        message: "SafeMeds took too long to answer, so we cannot confirm your order. Please check before ordering again.",
+      });
+    }
     partnerUnavailable(res, "order", err);
   }
 });
@@ -222,5 +269,8 @@ router.get("/orders", async (req, res) => {
     res.status(500).json({ message: "Failed to load your orders" });
   }
 });
+
+// Lets the tests start each case with nothing saved.
+router.clearSaved = () => lastGood.clear();
 
 module.exports = router;

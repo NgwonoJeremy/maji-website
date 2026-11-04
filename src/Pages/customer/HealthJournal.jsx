@@ -5,6 +5,7 @@ import {
   faTriangleExclamation,
   faStar,
   faCapsules,
+  faClockRotateLeft,
 } from "@fortawesome/free-solid-svg-icons";
 import Navbar from "../../components/Navbar";
 
@@ -29,16 +30,41 @@ function getUser() {
 
 // Fetches one Maji health route. Each section has its own state,
 // so if one SafeMeds endpoint is down, the other sections still load.
+// The SafeMeds-backed routes answer { data, stale, asOf }: stale means SafeMeds could not
+// be reached, so `data` is the last copy Maji saved, from the time in `asOf`.
 async function loadSection(path, setSection) {
   try {
     const res = await fetch(`${API}${path}`);
     if (!res.ok) throw new Error(`Server responded with ${res.status}`);
-    const data = await res.json();
-    setSection({ status: "ready", data: Array.isArray(data) ? data : [] });
+    const body = await res.json();
+    const list = Array.isArray(body) ? body : body.data;
+    setSection({
+      status: "ready",
+      data: Array.isArray(list) ? list : [],
+      stale: Boolean(body.stale),
+      asOf: body.asOf || null,
+    });
   } catch (err) {
     console.error(`Health Journal: ${path} unavailable:`, err.message);
     setSection({ status: "error", data: [] });
   }
+}
+
+// Shown above a section's data when SafeMeds could not be reached and Maji is showing
+// the last copy it saved. Without this, old data would look like live data.
+function StaleBanner({ section }) {
+  if (!section.stale) return null;
+
+  const time = section.asOf
+    ? new Date(section.asOf).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })
+    : "earlier";
+
+  return (
+    <div className="journal-notice journal-notice-stale">
+      <FontAwesomeIcon icon={faClockRotateLeft} className="journal-notice-stale-icon" />
+      <p>Showing saved data from {time}. SafeMeds is not responding right now.</p>
+    </div>
+  );
 }
 
 // Shown in a section when its data could not be loaded.
@@ -185,6 +211,7 @@ function HealthJournal() {
           <section className="panel journal-panel journal-full">
             <h2>In your area</h2>
             <p className="eyebrow">Waterborne illness alerts</p>
+            <StaleBanner section={alerts} />
 
             {estate.status === "loading" && <p>Loading alerts...</p>}
 
@@ -246,6 +273,7 @@ function HealthJournal() {
           <section className="panel journal-panel journal-narrow">
             <h2>Make it safe to drink</h2>
             <p className="eyebrow">Top-rated water treatment products</p>
+            <StaleBanner section={products} />
 
             {products.status === "loading" && <p>Loading products...</p>}
 
@@ -286,6 +314,7 @@ function HealthJournal() {
           <section className="panel journal-panel journal-wide">
             <h2>Water treatment tablets in stock</h2>
             <p className="eyebrow">Order from SafeMeds pharmacies</p>
+            <StaleBanner section={stock} />
 
             {notice && notice.type === "ok" && (
               <div className="journal-notice journal-notice-ok journal-order-notice">

@@ -7,7 +7,7 @@ Week 10 — Integration. Maji consumes the **SafeMeds** API (upstream partner) a
 | | |
 |---|---|
 | **Upstream partner** | SafeMeds (Group 3) |
-| **Partner base URL** | `https://safemeds-api-bxuv.onrender.com` (stored in `.env` as `SAFEMEDS_URL`). SafeMeds' real-data API; we switched to it on 29 Oct 2026 (see "Switch to the real-data API" below). |
+| **Partner base URL** | `https://safemeds-majiapp-api-nate.onrender.com` (stored in `.env` as `SAFEMEDS_URL`). SafeMeds' real-data API; we switched to it on 29 Oct 2026 (see "Switch to the real-data API" below). |
 | **Partner contract** | [SafeMeds `api_testing_documentation.md`](https://github.com/Mogaya-18/safeMeds-MajiApp-API/blob/main/api_testing_documentation.md) (real-data API). The original contract is [SafeMeds `openapi.yaml`](https://github.com/n4talii/SAFEMEDS_IAP/blob/main/SafeMeds.App/openapi.yaml). |
 | **API key** | Required on every route of the real-data API (`X-API-Key`, 401 without it). Stored in `.env` as `SAFEMEDS_API_KEY`, sent only by Maji's server, never committed. Key requested from SafeMeds; until it arrives, live calls return 401 and the page shows its safe fallback. (The first API needed no key.) |
 | **Feature built** | Health Journal page for customers (`/customer/health`) |
@@ -19,7 +19,7 @@ The first SafeMeds API served demonstration records. SafeMeds then published a s
 
 | What changed | Before | Now |
 |---|---|---|
-| Base URL | `https://safemeds-iap-api.onrender.com/api` | `https://safemeds-api-bxuv.onrender.com` (no `/api`) |
+| Base URL | `https://safemeds-iap-api.onrender.com/api` | `https://safemeds-majiapp-api-nate.onrender.com` (no `/api`) |
 | Key | None | `X-API-Key` on every route |
 | Products | `/products/water-purification?sort=rating` | `/reviews`: top 3 only, adds `topComment` |
 | Stock | `/inventory?product=chlorine-tablets&available=true` | `/inventory?available=true`: four water treatment products, so the section is no longer chlorine only |
