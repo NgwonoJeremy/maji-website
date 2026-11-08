@@ -33,20 +33,38 @@ async function loadSection(path, setSection) {
   try {
     const res = await fetch(`${API}${path}`);
     if (!res.ok) throw new Error(`Server responded with ${res.status}`);
-    const data = await res.json();
-    setSection({ status: "ready", data: Array.isArray(data) ? data : [] });
+    const body = await res.json();
+    // SafeMeds routes send { data, stale, asOf }; the orders route still sends a plain list.
+    const list = Array.isArray(body) ? body : body.data;
+    setSection({
+      status: "ready",
+      data: Array.isArray(list) ? list : [],
+      stale: Boolean(body && body.stale),
+      asOf: body && body.asOf ? body.asOf : null,
+    });
   } catch (err) {
     console.error(`Health Journal: ${path} unavailable:`, err.message);
     setSection({ status: "error", data: [] });
   }
 }
-
 // Shown in a section when its data could not be loaded.
 function Unavailable({ children }) {
   return (
     <div className="journal-notice journal-notice-error">
       <FontAwesomeIcon icon={faTriangleExclamation} className="journal-notice-error-icon" />
       <p>{children}</p>
+    </div>
+  );
+}
+
+function StaleBanner({ section }) {
+  if (!section.stale) return null;
+  return (
+    <div className="journal-notice journal-notice-error">
+      <FontAwesomeIcon icon={faTriangleExclamation} className="journal-notice-error-icon" />
+      <p>
+        Showing saved data from {new Date(section.asOf).toLocaleTimeString()}. SafeMeds is not responding.
+      </p>
     </div>
   );
 }
@@ -185,6 +203,7 @@ function HealthJournal() {
           <section className="panel journal-panel journal-full">
             <h2>In your area</h2>
             <p className="eyebrow">Waterborne illness alerts</p>
+            <StaleBanner section={alerts} />
 
             {estate.status === "loading" && <p>Loading alerts...</p>}
 
@@ -246,6 +265,7 @@ function HealthJournal() {
           <section className="panel journal-panel journal-narrow">
             <h2>Make it safe to drink</h2>
             <p className="eyebrow">Top-rated water treatment products</p>
+            <StaleBanner section={products} />
 
             {products.status === "loading" && <p>Loading products...</p>}
 
@@ -286,6 +306,7 @@ function HealthJournal() {
           <section className="panel journal-panel journal-wide">
             <h2>Water treatment tablets in stock</h2>
             <p className="eyebrow">Order from SafeMeds pharmacies</p>
+            <StaleBanner section={stock} />
 
             {notice && notice.type === "ok" && (
               <div className="journal-notice journal-notice-ok journal-order-notice">
