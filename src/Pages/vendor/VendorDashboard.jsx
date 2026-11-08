@@ -30,7 +30,6 @@ const VendorDashboard = () => {
     businessName:   user?.name || "Vendor",
     ownerName:      user?.name || "Vendor",
     estateCoverage: "Nairobi",
-    capacityLiters: "2000",
   });
   const [vendorMetrics, setVendorMetrics] = useState({
     isAcceptingOrders: true,
@@ -77,7 +76,6 @@ const VendorDashboard = () => {
             businessName:   myProfile.business_name  || user.name,
             ownerName:      myProfile.owner_name     || user.name,
             estateCoverage: myProfile.estate         || "Nairobi",
-            capacityLiters: myProfile.daily_capacity || "2000",
           });
         }
 
@@ -170,8 +168,7 @@ const VendorDashboard = () => {
             Manage your incoming water fulfillment queues
           </p>
           <p className="vd-coverage-tag">
-            📍 Covering <b>{profile.estateCoverage}</b> · Registered capacity:{" "}
-            <b>{profile.capacityLiters} L/day</b>
+            📍 Covering <b>{profile.estateCoverage}</b>
           </p>
         </div>
         <div className="vd-toggle-wrapper">
