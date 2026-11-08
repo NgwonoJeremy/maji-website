@@ -18,7 +18,9 @@ function newRoute() {
 // A label for who called, without ever writing the key itself.
 // requireApiKey sets req.apiKey only for a valid key, so wrong or missing keys are "none".
 function who(req) {
-  return req.consumer || "none";
+  if (!req.apiKey) return "none";
+  const hash = crypto.createHash("sha256").update(req.apiKey).digest("hex");
+  return "key-" + hash.slice(0,6);
 }
 
 function monitor(req, res, next) {

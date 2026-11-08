@@ -208,7 +208,13 @@ router.post("/orders", async (req, res) => {
       recorded,
     });
   } catch (err) {
-    partnerUnavailable(res, "order", err);
+    if(err.name === "TimeoutError") {
+      console.error("SafeMeds order failed:",failureReason(err));
+      return res.status(504).json({
+        message:"SafeMeds took too long to answer, so we cannot confirm your order.Please check before ordering again.",
+      });
+    }
+    partnerUnavailable(res,"order",err);
   }
 });
 
@@ -242,4 +248,5 @@ router.get("/orders", async (req, res) => {
   }
 });
 
+router.clearSaved = () => lastGood.clear();
 module.exports = router;
