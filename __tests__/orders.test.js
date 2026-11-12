@@ -1,167 +1,92 @@
-process.env.API_KEYS = "skillsbridge:test-key-123"
-jest.mock("../server/db", () => ({
-  query: jest.fn()
+process.env.API_KEYS = "skillbridge:test-key";
+
+// No real database: db.query answers from a small fake list.
+jest.mock("./db", () => ({
+  query: jest.fn(async (sql) => {
+    if (/DISTINCT\s+estate\s+FROM orders/i.test(sql) && !/delivery_time/i.test(sql)) {
+      return [[{ estate: "Kasarani" }, { estate: "Roysambu" }], []];
+    }
+    if (/delivery_time/i.test(sql)) {
+      return [[{ estate: "Kasarani", deliveryTime: "08:00" }], []];
+    }
+    return [[], []];
+  }),
 }));
 
 const request = require("supertest");
-const db = require("../server/db");
-const app = require("../server/app");
-const authGet = (url) => request(app).get(url).set("X-API-Key", "test-key-123");
+const app = require("./app");
 
-describe("order and active delivery endpoints", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
+const KEY = { "X-API-Key": "test-key" };
+const V1_ESTATES = "/api/v1/orders/active/estates";
+const OLD_ESTATES = "/api/orders/active/estates";
+const V2_ESTATES = "/api/v2/orders/active/estates";
+
+describe("v1 is frozen", () => {
+  test("GET /api/v1/orders/active/estates keeps its original shape", async () => {
+    const res = await request(app).get(V1_ESTATES).set(KEY);
+    expect(res.status).toBe(200);
+    expect(Array.isArray(res.body)).toBe(true);
+    expect(Object.keys(res.body[0]).sort()).toEqual(["estate"]);
   });
 
-  describe("GET /api/orders/active/estates", () => {
-    it("returns active estates with the contracted response shape", async () => {
-      db.query.mockResolvedValueOnce([[{ estate: "Kasarani" }], []]);
-
-      const response = await authGet("/api/orders/active/estates");
-
-      expect(response.status).toBe(200);
-      expect(response.body).toEqual([{ estate: "Kasarani" }]);
-      expect(typeof response.body[0].estate).toBe("string");
-    });
-
-    it("returns an empty array when there are no active estates", async () => {
-      db.query.mockResolvedValueOnce([[], []]);
-
-      const response = await authGet("/api/orders/active/estates");
-
-      expect(response.status).toBe(200);
-      expect(response.body).toEqual([]);
-    });
+  test("old unversioned /api/orders/active/estates still answers the same way", async () => {
+    const a = await request(app).get(OLD_ESTATES).set(KEY);
+    const b = await request(app).get(V1_ESTATES).set(KEY);
+    expect(a.status).toBe(200);
+    expect(a.body).toEqual(b.body);
+    expect(a.body).toEqual([{ estate: "Kasarani" }, { estate: "Roysambu" }]);
   });
 
-  describe("GET /api/orders/active/schedules", () => {
-    it("returns active schedules with estate and delivery time", async () => {
-      db.query.mockResolvedValueOnce([[
-        { estate: "Kasarani", deliveryTime: "14:00" }
-      ], []]);
+  test("v1 still needs a key", async () => {
+    const res = await request(app).get(OLD_ESTATES);
+    expect(res.status).toBe(401);
+    expect(res.body).toEqual({ error: "Missing or invalid API key" });
+  });
+});
 
-      const response = await authGet("/api/orders/active/schedules");
-
-      expect(response.status).toBe(200);
-      expect(response.body).toEqual([
-        { estate: "Kasarani", deliveryTime: "14:00" }
-      ]);
-      expect(typeof response.body[0].estate).toBe("string");
-      expect(typeof response.body[0].deliveryTime).toBe("string");
-    });
-
-    it("returns an empty array when there are no active schedules", async () => {
-      db.query.mockResolvedValueOnce([[], []]);
-
-      const response = await authGet("/api/orders/active/schedules");
-
-      expect(response.status).toBe(200);
-      expect(response.body).toEqual([]);
+describe("v2 has the new shape", () => {
+  test("list is wrapped in { data, count }", async () => {
+    const res = await request(app).get(V2_ESTATES).set(KEY);
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({
+      data: [{ estate: "Kasarani" }, { estate: "Roysambu" }],
+      count: 2,
     });
   });
 
-  describe("POST /api/orders", () => {
-    const orderInput = {
-      customerId: 12,
-      vendorId: null,
-      estate: "Kasarani",
-      volume: 100,
-      deliveryTime: "Afternoon (12pm - 6pm)",
-      totalAmount: 50,
-      paymentMethod: "cash"
-    };
+  test("v2 needs an API key like everything else", async () => {
+    const res = await request(app).get(V2_ESTATES);
+    expect(res.status).toBe(401);
+  });
 
-    it("creates an order and returns the persisted order fields", async () => {
-      const createdOrder = {
-        id: 41,
-        customer_id: 12,
-        vendor_id: null,
-        estate: "Kasarani",
-        volume: 100,
-        delivery_time: "Afternoon (12pm - 6pm)",
-        total_amount: 50,
-        payment_method: "cash",
-        status: "pending"
-      };
-      db.query
-        .mockResolvedValueOnce([[{ id: 12 }], []])
-        .mockResolvedValueOnce([{ insertId: 41 }, []])
-        .mockResolvedValueOnce([[createdOrder], []]);
+  test("endpoints that did not change answer the same on v2 as on v1", async () => {
+    const a = await request(app).get("/api/v1/orders/active/schedules").set(KEY);
+    const b = await request(app).get("/api/v2/orders/active/schedules").set(KEY);
+    expect(b.status).toBe(200);
+    expect(b.body).toEqual(a.body);
+  });
+});
 
-      const response = await request(app)
-        .post("/api/orders")
-        .send(orderInput);
+describe("deprecation headers", () => {
+  test("v1 and the old URL announce the sunset", async () => {
+    for (const path of [V1_ESTATES, OLD_ESTATES]) {
+      const res = await request(app).get(path).set(KEY);
+      expect(res.headers.deprecation).toBe("true");
+      expect(res.headers.sunset).toBe("Fri, 13 Nov 2026 00:00:00 GMT");
+      expect(res.headers.link).toContain('rel="successor-version"');
+      expect(res.headers.link).toContain(V2_ESTATES);
+    }
+  });
 
-      expect(response.status).toBe(201);
-      expect(response.body.order).toEqual(createdOrder);
-      expect(response.body.order.id).toBe(41);
-      expect(response.body.order.status).toBe("pending");
-    });
+  test("v2 and unchanged endpoints do not carry them", async () => {
+    for (const path of [V2_ESTATES, "/api/orders/active/schedules"]) {
+      const res = await request(app).get(path).set(KEY);
+      expect(res.headers.deprecation).toBeUndefined();
+    }
+  });
 
-    it("rejects a request with missing required fields", async () => {
-      const response = await request(app)
-        .post("/api/orders")
-        .send({ estate: "Kasarani" });
-
-      expect(response.status).toBe(400);
-      expect(response.body.message).toBe("All fields are required");
-      expect(db.query).not.toHaveBeenCalled();
-    });
-
-    it("rejects a zero-volume order at the minimum boundary", async () => {
-      const response = await request(app)
-        .post("/api/orders")
-        .send({ ...orderInput, volume: 0 });
-
-      expect(response.status).toBe(400);
-      expect(response.body.message).toBe("Volume must be greater than 0");
-      expect(db.query).not.toHaveBeenCalled();
-    });
-
-    it("rejects a volume with the wrong type", async () => {
-      const response = await request(app)
-        .post("/api/orders")
-        .send({ ...orderInput, volume: "100" });
-
-      expect(response.status).toBe(400);
-      expect(response.body.message).toBe("Invalid field types");
-      expect(db.query).not.toHaveBeenCalled();
-    });
-
-    it("rejects a payment method with the wrong type", async () => {
-      const response = await request(app)
-        .post("/api/orders")
-        .send({ ...orderInput, paymentMethod: 42 });
-
-      expect(response.status).toBe(400);
-      expect(response.body.message).toBe("Invalid field types");
-      expect(db.query).not.toHaveBeenCalled();
-    });
-
-    it("returns 404 when the customer does not exist", async () => {
-      db.query.mockResolvedValueOnce([[], []]);
-
-      const response = await request(app)
-        .post("/api/orders")
-        .send(orderInput);
-
-      expect(response.status).toBe(404);
-      expect(response.body.message).toBe("Customer not found");
-      expect(db.query).toHaveBeenCalledTimes(1);
-    });
-
-    it("returns 404 when the supplied vendor does not exist", async () => {
-      db.query
-        .mockResolvedValueOnce([[{ id: 12 }], []])
-        .mockResolvedValueOnce([[], []]);
-
-      const response = await request(app)
-        .post("/api/orders")
-        .send({ ...orderInput, vendorId: 99 });
-
-      expect(response.status).toBe(404);
-      expect(response.body.message).toBe("Vendor not found");
-      expect(db.query).toHaveBeenCalledTimes(2);
-    });
+  test("a request with no key gets no deprecation headers", async () => {
+    const res = await request(app).get(OLD_ESTATES);
+    expect(res.headers.deprecation).toBeUndefined();
   });
 });

@@ -2,10 +2,12 @@ const express = require("express");
 const db = require("./db");
 const { requireApiKey, rateLimit } = require("./middleware/security"); // Key check first, then the limiter, so anonymous callers cannot use up a real consumer's allowance. 
 const partnerOnly = [  requireApiKey,  rateLimit({ windowMs: 60 * 1000, max: Number(process.env.RATE_LIMIT_MAX) || 100 }), ];
+const { deprecated } = require("./versions/deprecate");
+const old = deprecated({ sunset: "2026-11-13", successor: "/api/v2/orders/active/estates" });
 const router = express.Router();
 //SkillBridge api
 //api to get estates with active orders.
-router.get("/orders/active/estates", partnerOnly, async (req, res) => {
+router.get("/orders/active/estates", partnerOnly, old, async (req, res) => {
     try {
         const [rows] = await db.query(`
             SELECT DISTINCT estate
@@ -446,3 +448,4 @@ router.delete("/vendors/:id", async (req, res) => {
 });
 
 module.exports = router;
+module.exports.partnerOnly = partnerOnly;
