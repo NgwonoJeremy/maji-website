@@ -17,7 +17,8 @@ function requireApiKey(req, res, next) {
   if (!consumer) {
     return res.status(401).json({ error: "Missing or invalid API key" });
   }
-
+  
+  req.apiKey=key; // valid key only; monitoring hashes it, never logs it
   req.consumer = consumer;   // who is calling; used by the rate limiter
   next();
 }
