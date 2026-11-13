@@ -18,16 +18,14 @@ it, for example `response.json().map(...)` or `for (const e of body)`]. With v2
 the body is an object, so that line gets `{ data, count }` instead of a list.
 SkillBridge must read the list from `body.data`.
 
-## 4. Who still uses v1 (fill in after the partner has migrated)
-[Part F: from your /stats or logs, how many calls to the old URL and which caller
-labels. Could v1 be switched off today without breaking anyone?]
+## 4. Who still uses v1
+From our /stats on [date, time]: `GET /api/orders/active/estates` (old URL): [N] calls from [caller labels];
+`GET /api/v1/orders/active/estates`: [N]; `GET /api/v2/orders/active/estates`: [N].
+[SkillBridge is / is not still on v1.] [We could / could not switch v1 off today without breaking anyone, because ...]
 
 ## 5. Receiving the SafeMeds notice (Part E)
-[Write 1 or 2 sentences about how it felt to receive SafeMeds' notice, what it
-said clearly, and what was missing.]
+SafeMeds' notice was dated 12 Nov and said v1 of `/reviews` would stop on 13 Nov, which gave us only one day.
+It was clear about what changes (the list is wrapped in `{ data, count }`), what stays the same, and why, and the
+real before-and-after example let me test `/v2/reviews` by hand and compare it before touching any code. What was
+missing in the copy we received was a set of migration steps, a timeline beyond the sunset date, and a contact for questions.
 
-## 6. Reflection (150 to 250 words, in your own words)
-[Answer the four questions from the handout: what was it like to receive a
-breaking change on short notice, what the partner's notice did well and what was
-missing, what you would change in your own notice, and one thing you would do
-differently as the API owner next time. Be specific.]

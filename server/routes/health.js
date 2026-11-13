@@ -7,7 +7,11 @@
 const express = require("express");
 const db = require("../db");
 const { fetchWithRetry } = require("../resilientFetch");
+const { currentVersion } = require("../partner");
 const router = express.Router();
+
+// Week 13: which SafeMeds /reviews version we call, set by PARTNER_VERSION (v1 or v2) in .env. 
+const reviews = currentVersion();
 
 const SAFEMEDS_URL = process.env.SAFEMEDS_URL;         // SafeMeds base URL, set in .env
 const SAFEMEDS_API_KEY = process.env.SAFEMEDS_API_KEY; // SafeMeds key, set in .env, never committed
@@ -34,7 +38,7 @@ async function safeMedsFetch(path, options = {}) {
 
 // GETs one SafeMeds list endpoint. Returns the parsed JSON array,
 // or throws an error whose message says what went wrong.
-async function getList(path) {
+async function getList(path, parse) {
   const response = await safeMedsFetch(path);
 
   if (!response.ok) {
@@ -42,6 +46,9 @@ async function getList(path) {
   }
 
   const data = await response.json();
+
+  // Versioned endpoints know their own shape (partner.js), so they bring their own parser.
+  if (parse) return parse(data);
 
   if (!Array.isArray(data)) {
     throw new Error("SafeMeds response was not a list");
@@ -61,9 +68,9 @@ const lastGood = new Map(); // path -> { data, asOf }
 // Fetches a list, reshapes it, and sends { data, stale, asOf }.
 // If SafeMeds fails and a saved copy exists, sends that with stale: true.
 // If nothing is saved, sends the 502 "Partner data unavailable" message.
-async function sendList(res, what, path, shape) {
+async function sendList(res, what, path, shape, parse) {
   try {
-    const data = (await getList(path)).map(shape);
+    const data = (await getList(path, parse)).map(shape);
     const asOf = new Date().toISOString();
     lastGood.set(path, { data, asOf });
     return res.json({ data, stale: false, asOf });
@@ -119,13 +126,13 @@ router.get("/alerts", async (req, res) => {
 // GET /api/health/products
 // Top-rated water-treatment products (SafeMeds returns the top 3).
 router.get("/products", (req, res) =>
-  sendList(res, "products", "/reviews", (product) => ({
+  sendList(res, "products", reviews.path, (product) => ({
     productId: product.productId,
     productName: product.productName,
     averageRating: product.averageRating,
     reviewCount: product.reviewCount,
     topComment: product.topComment,
-  }))
+  }), reviews.parse)
 );
 
 // GET /api/health/stock

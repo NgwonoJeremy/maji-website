@@ -121,3 +121,11 @@ Update after Week 9:
 - Our five partner endpoints (`/orders/active/estates`, `/orders/active/schedules`, `/vendors/top-rated`, `/vendors/locations`, `/vendors/all`) now require an API key sent in the `X-API-Key` header. A missing or wrong key returns 401.
 - Each consumer has its own key. SkillsBridge's key was sent to them privately.
 - Rate limit: 100 requests per minute per key. Above that, the API returns 429 with a `Retry-After` header.
+
+
+
+## Migration to SafeMeds v2
+
+| Date | Symptom | What changed | What we changed | Whose code | Notes |
+|---|---|---|---|---|---|
+| 13 Nov 2026 | Deprecation notice from SafeMeds (sent 12 Nov): `GET /reviews` (v1) stops working on 13 Nov | v2 at `GET /v2/reviews` wraps the list as `{ "data": [...], "count": N }`; the fields (`productId`, `productName`, `averageRating`, `reviewCount`, `topComment`) are unchanged | Added `partner.js` (v1 and v2 parsers), `PARTNER_VERSION` in `.env`, and `health.js` now reads the path and parser from it for `/api/health/products`. Tested by hand against `/v2/reviews` (200, count 3), with `partner.test.js`, and the Health Journal shows `"stale": false` | SafeMeds' change; our code adapted | Nothing broke this time because we were warned. One 502 during testing was a timeout while SafeMeds' Render service woke up, not a migration bug. `PARTNER_VERSION=v2` still has to be set on Render by the service owner. |
