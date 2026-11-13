@@ -1,39 +1,70 @@
-# Deprecation notice: Maji API, active estates (v1)
-To: SkillBridge          From: Marie Mumbu (Maji, Team 4)        Date: 12 November 2026
+# Maji API: Update to the Active Estates Endpoint
 
-## Summary
-v1 of `GET /api/orders/active/estates` is deprecated. v2 is live now. v1 will
-stop working on **13 November 2026**. Please move before then.
+**To:** SkillBridge  
+**From:** Maji, Team 4
+**Date:** 12 November 2026
 
-## What is changing
-- The list is wrapped: `[ ... ]` becomes `{ "data": [ ... ], "count": N }`
-- Nothing else changes: the field name `estate`, your API key, the rate limit,
-  and every other Maji endpoint (schedules, vendors) keep working exactly as now.
 
-## Why
-Wrapping the list lets us add paging and totals later without another breaking
-change for you.
+Good morning SkillBridge,
 
-## Before and after
-v1   `GET /api/orders/active/estates`
+We have  released a new version (v2) of our active estates endpoint, and we'd like you to start using it.
 
-    [ { "estate": "Kasarani" }, { "estate": "Roysambu" } ]
+The current v1 endpoint will be retired on **13 November 2026**, so please make sure to update your integration before then.
 
-v2   `GET /api/v2/orders/active/estates`
+## What has changed?
 
-    { "data": [ { "estate": "Kasarani" }, { "estate": "Roysambu" } ],
-      "count": 2 }
+The main change is how we return the list of active estates.
 
-## How to migrate
-1. Call `/api/v2/orders/active/estates` instead of `/api/orders/active/estates`.
-   Same key (`X-API-Key`), same rate limit.
-2. Read the list from `body.data` instead of from the body itself.
-3. Test it, then tell me, so I can see your calls to the v2 URL in our logs.
+In v1, the API returns a list directly:
 
-## Timeline
-- Today (12 Nov 2026): v2 is live. v1 still works and now sends `Deprecation`,
-  `Sunset` and `Link` headers on every response.
-- 13 Nov 2026: v1 of this endpoint stops working.
+**v1 –** `GET /api/orders/active/estates`
 
-## Questions
-Message me any time. I will reply within [FILL IN: for example 1 hour].
+```json
+[
+  { "estate": "Kasarani" },
+  { "estate": "Roysambu" }
+]
+```
+
+In v2, the list is wrapped in an object containing `data` and `count`:
+
+**v2 –** `GET /api/v2/orders/active/estates`
+
+```json
+{
+  "data": [
+    { "estate": "Kasarani" },
+    { "estate": "Roysambu" }
+  ],
+  "count": 2
+}
+```
+
+Everything else stays the same. The `estate` field, your API key, the rate limit and our other endpoints (schedules and vendors) are not affected.
+
+## Why are we making this change?
+
+We want to make it easier to introduce additional features in the future, particularly pagination and totals, without having to change the response structure again.
+
+## What do you need to do?
+
+The migration should be straightforward:
+
+1. Update your request URL to `/api/v2/orders/active/estates`.
+2. Instead of reading the list directly from the response body, access it through `body.data`.
+3. You can continue using the same API key (`X-API-Key`). The rate limit also remains unchanged.
+4. Test the new endpoint and let us know once you've migrated so we can confirm the v2 requests in our logs.
+
+## Migration timeline
+
+- **12 November 2026:** v2 is available. v1 continues to work but now includes `Deprecation`, `Sunset` and `Link` headers to indicate the upcoming change.
+- **13 November 2026:** v1 will stop working.
+
+We recommend making the switch as soon as possible to avoid any interruption to your integration.
+
+
+If anything is unclear or you run into issues during the migration, feel free to reach out to us. 
+Thank you. 
+
+ 
+**Maji – Team 4**
